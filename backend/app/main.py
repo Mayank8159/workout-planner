@@ -1,17 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-import tensorflow as tf
 from app.models.database import connect_to_mongo, close_mongo_connection
 from app.routes import auth, scan, workout, history, health
 from app.core.config import settings
+from typing import Optional, Any
 
 
 # Global state for TFLite model
 class AppState:
-    model: tf.lite.Interpreter = None
-    input_details = None
-    output_details = None
+    model: Optional[Any] = None
+    input_details: Optional[list] = None
+    output_details: Optional[list] = None
 
 
 app_state = AppState()
@@ -30,21 +30,24 @@ async def lifespan(app: FastAPI):
         # Connect to MongoDB
         await connect_to_mongo()
         
-        # Load TFLite model
-        # Note: Using a pre-trained food classification model
-        # Download from: https://www.tensorflow.org/lite/models
-        try:
-            model_path = "models/food_model.tflite"  # Path to your TFLite model
-            app_state.model = tf.lite.Interpreter(model_path=model_path)
-            app_state.model.allocate_tensors()
-            app_state.input_details = app_state.model.get_input_details()
-            app_state.output_details = app_state.model.get_output_details()
-            print("✓ TFLite model loaded successfully")
-        except FileNotFoundError:
-            print("⚠ TFLite model not found. Running in simulation mode.")
-            app_state.model = None
-        except Exception as e:
-            print(f"⚠ Failed to load TFLite model: {e}. Running without model.")
+        # Load TFLite model (optional, can be skipped in development)
+        if not settings.SKIP_TFLITE:
+            try:
+                import tensorflow as tf
+                model_path = "models/food_model.tflite"  # Path to your TFLite model
+                app_state.model = tf.lite.Interpreter(model_path=model_path)
+                app_state.model.allocate_tensors()
+                app_state.input_details = app_state.model.get_input_details()
+                app_state.output_details = app_state.model.get_output_details()
+                print("✓ TFLite model loaded successfully")
+            except FileNotFoundError:
+                print("⚠ TFLite model not found. Running in simulation mode.")
+                app_state.model = None
+            except Exception as e:
+                print(f"⚠ Failed to load TFLite model: {e}. Running without model.")
+                app_state.model = None
+        else:
+            print("⚠ TFLite loading skipped (SKIP_TFLITE=true). Running in simulation mode.")
             app_state.model = None
         
         print("✓ Application startup complete")

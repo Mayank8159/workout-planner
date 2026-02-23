@@ -1,11 +1,11 @@
 from fastapi import HTTPException, status, Depends
-from fastapi.security import HTTPBearer, HTTPAuthCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.core.security import verify_token
 
 security = HTTPBearer()
 
 
-async def get_current_user(credentials: HTTPAuthCredentials = Depends(security)) -> str:
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
     """
     Dependency to extract and verify user from JWT token
     

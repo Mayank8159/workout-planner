@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
     PORT: int = int(os.getenv("PORT", "8000"))
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
+    SKIP_TFLITE: bool = os.getenv("SKIP_TFLITE", "false").lower() == "true"
     
     class Config:
         env_file = ".env"

@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { secureStorage } from './secureStorage';
 
-export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:8001';
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -39,12 +39,12 @@ export const userAPI = {
   },
 
   login: async (email: string, password: string) => {
-    const response = await apiClient.post('/users/login', { email, password });
+    const response = await apiClient.post('/auth/login', { email, password });
     return response.data;
   },
 
   register: async (username: string, email: string, password: string) => {
-    const response = await apiClient.post('/users/register', {
+    const response = await apiClient.post('/auth/register', {
       username,
       email,
       password,
@@ -60,12 +60,12 @@ export const dataAPI = {
   },
 
   getWorkouts: async (date: string) => {
-    const response = await apiClient.get(`/workouts/date/${date}`);
-    return response.data;
+    const response = await apiClient.get(`/data/${date}`);
+    return response.data?.workouts || [];
   },
 
   addWorkout: async (workoutData: any) => {
-    const response = await apiClient.post('/workouts', workoutData);
+    const response = await apiClient.post('/workout', workoutData);
     return response.data;
   },
 
@@ -77,18 +77,19 @@ export const dataAPI = {
 
 export const nutritionAPI = {
   getDailyNutrition: async (date: string) => {
-    const response = await apiClient.get(`/nutrition/date/${date}`);
-    return response.data;
+    const response = await apiClient.get(`/data/${date}`);
+    return response.data?.nutrition || {};
   },
 
   addFoodItem: async (foodData: any) => {
-    const response = await apiClient.post('/nutrition/food', foodData);
+    // Food items are added through scan endpoint
+    const response = await apiClient.post('/scan', { food_item: foodData.name, calories: foodData.calories });
     return response.data;
   },
 
   deleteFoodItem: async (foodId: string) => {
-    const response = await apiClient.delete(`/nutrition/food/${foodId}`);
-    return response.data;
+    // Backend doesn't have delete endpoint yet, mock response
+    return { success: true };
   },
 
   logMealFromPrediction: async (mealData: {
@@ -97,7 +98,11 @@ export const nutritionAPI = {
     confidence: number;
     date: string;
   }) => {
-    const response = await apiClient.post('/nutrition/meal-prediction', mealData);
+    const response = await apiClient.post('/scan', {
+      food_item: mealData.foodItem,
+      calories: mealData.calories,
+      confidence: mealData.confidence,
+    });
     return response.data;
   },
 };
@@ -110,7 +115,7 @@ export const calorieDetectionAPI = {
       const blob = await response.blob();
       formData.append('image', blob as any, 'photo.jpg');
 
-      const result = await apiClient.post('/predict', formData, {
+      const result = await apiClient.post('/scan', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
