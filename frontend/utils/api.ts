@@ -73,6 +73,17 @@ export const dataAPI = {
     const response = await apiClient.delete(`/workouts/${workoutId}`);
     return response.data;
   },
+
+  updateUserSettings: async (settingsData: {
+    username?: string;
+    dailyCalorieGoal?: number;
+    proteinGoal?: number;
+    carbsGoal?: number;
+    fiberGoal?: number;
+  }) => {
+    const response = await apiClient.put('/users/settings', settingsData);
+    return response.data;
+  },
 };
 
 export const nutritionAPI = {

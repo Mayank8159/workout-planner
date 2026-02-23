@@ -72,7 +72,7 @@ export default function HelpSupportScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#0f172a' }}>
       <ScrollView
         style={{ flex: 1, backgroundColor: '#0f172a' }}
-        contentContainerStyle={{ paddingBottom: 40 }}>
+        contentContainerStyle={{ paddingBottom: 40, paddingTop: 12 }}>
         {/* Header with Gradient Background */}
         <LinearGradient
           colors={['rgba(139, 92, 246, 0.15)', 'rgba(15, 23, 42, 0)']}

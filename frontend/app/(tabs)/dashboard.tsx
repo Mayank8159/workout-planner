@@ -64,6 +64,9 @@ export default function DashboardScreen() {
 
   // Daily calorie goal
   const dailyCalorieGoal = user?.dailyCalorieGoal || 2200;
+  const proteinGoal = user?.proteinGoal || 150;
+  const carbsGoal = user?.carbsGoal || 200;
+  const fiberGoal = user?.fiberGoal || 25;
 
   // Generate week days
   useEffect(() => {
@@ -167,7 +170,7 @@ export default function DashboardScreen() {
   return (
     <SafeAreaView className="flex-1 bg-slate-900">
       <LinearGradient colors={['#0f172a', '#1e293b']} className="flex-1">
-        <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 140 }}>
+        <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 140, paddingTop: 12 }}>
           {/* Professional Header with Gradient Background */}
           <LinearGradient
             colors={['rgba(59, 130, 246, 0.15)', 'rgba(15, 23, 42, 0)']}
@@ -326,11 +329,23 @@ export default function DashboardScreen() {
                         padding: 12,
                         borderWidth: 1,
                         borderColor: 'rgba(96, 165, 250, 0.2)',
-                        alignItems: 'center',
                       }}>
-                      <MaterialIcons name="grain" size={18} color="#60a5fa" />
-                      <Text className="text-blue-300 font-bold text-lg mt-1">{Math.round(nutritionData.total_carbs)}g</Text>
-                      <Text className="text-slate-400 text-xs mt-1">Carbs</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <MaterialIcons name="grain" size={16} color="#60a5fa" />
+                        <Text className="text-blue-300 font-bold text-xs ml-1">Carbs</Text>
+                      </View>
+                      <Text className="text-white font-bold text-sm">{Math.round(nutritionData.total_carbs)}g</Text>
+                      <Text className="text-slate-400 text-xs mt-1">Goal: {carbsGoal}g</Text>
+                      <Progress.Bar
+                        progress={Math.min(nutritionData.total_carbs / carbsGoal, 1)}
+                        width={null}
+                        height={4}
+                        borderRadius={2}
+                        color="#60a5fa"
+                        unfilledColor="rgba(96, 165, 250, 0.2)"
+                        borderWidth={0}
+                        style={{ marginTop: 8 }}
+                      />
                     </LinearGradient>
 
                     {/* Protein */}
@@ -344,11 +359,23 @@ export default function DashboardScreen() {
                         padding: 12,
                         borderWidth: 1,
                         borderColor: 'rgba(168, 85, 247, 0.2)',
-                        alignItems: 'center',
                       }}>
-                      <MaterialIcons name="local-fire-department" size={18} color="#c084fc" />
-                      <Text className="text-purple-300 font-bold text-lg mt-1">{Math.round(nutritionData.total_protein)}g</Text>
-                      <Text className="text-slate-400 text-xs mt-1">Protein</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <MaterialIcons name="local-fire-department" size={16} color="#c084fc" />
+                        <Text className="text-purple-300 font-bold text-xs ml-1">Protein</Text>
+                      </View>
+                      <Text className="text-white font-bold text-sm">{Math.round(nutritionData.total_protein)}g</Text>
+                      <Text className="text-slate-400 text-xs mt-1">Goal: {proteinGoal}g</Text>
+                      <Progress.Bar
+                        progress={Math.min(nutritionData.total_protein / proteinGoal, 1)}
+                        width={null}
+                        height={4}
+                        borderRadius={2}
+                        color="#c084fc"
+                        unfilledColor="rgba(168, 85, 247, 0.2)"
+                        borderWidth={0}
+                        style={{ marginTop: 8 }}
+                      />
                     </LinearGradient>
 
                     {/* Fat */}
@@ -362,13 +389,59 @@ export default function DashboardScreen() {
                         padding: 12,
                         borderWidth: 1,
                         borderColor: 'rgba(249, 115, 22, 0.2)',
-                        alignItems: 'center',
                       }}>
-                      <MaterialIcons name="opacity" size={18} color="#f97316" />
-                      <Text className="text-orange-300 font-bold text-lg mt-1">{Math.round(nutritionData.total_fat)}g</Text>
-                      <Text className="text-slate-400 text-xs mt-1">Fat</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                        <MaterialIcons name="opacity" size={16} color="#f97316" />
+                        <Text className="text-orange-300 font-bold text-xs ml-1">Fat</Text>
+                      </View>
+                      <Text className="text-white font-bold text-sm">{Math.round(nutritionData.total_fat)}g</Text>
+                      <Text className="text-slate-400 text-xs mt-1">~70g</Text>
+                      <Progress.Bar
+                        progress={Math.min(nutritionData.total_fat / 70, 1)}
+                        width={null}
+                        height={4}
+                        borderRadius={2}
+                        color="#f97316"
+                        unfilledColor="rgba(249, 115, 22, 0.2)"
+                        borderWidth={0}
+                        style={{ marginTop: 8 }}
+                      />
                     </LinearGradient>
                   </View>
+
+                  {/* Fiber Goal */}
+                  <LinearGradient
+                    colors={['rgba(34, 197, 94, 0.15)', 'rgba(22, 163, 74, 0.08)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                      borderRadius: 12,
+                      padding: 12,
+                      marginBottom: 16,
+                      borderWidth: 1,
+                      borderColor: 'rgba(34, 197, 94, 0.2)',
+                    }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                      <MaterialIcons name="local-dining" size={16} color="#22c55e" />
+                      <Text className="text-green-300 font-bold text-xs ml-1">Fiber</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <View>
+                        <Text className="text-white font-bold text-sm">{Math.round(nutritionData.total_fiber)}g</Text>
+                        <Text className="text-slate-400 text-xs">Goal: {fiberGoal}g</Text>
+                      </View>
+                      <Text className="text-slate-400 text-xs">{Math.round((nutritionData.total_fiber / fiberGoal) * 100)}%</Text>
+                    </View>
+                    <Progress.Bar
+                      progress={Math.min(nutritionData.total_fiber / fiberGoal, 1)}
+                      width={null}
+                      height={4}
+                      borderRadius={2}
+                      color="#22c55e"
+                      unfilledColor="rgba(34, 197, 94, 0.2)"
+                      borderWidth={0}
+                    />
+                  </LinearGradient>
 
                   {/* Remaining Calories */}
                   <View

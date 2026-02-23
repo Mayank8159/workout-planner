@@ -33,12 +33,24 @@ class UserLoginSchema(BaseModel):
     password: str
 
 
+class UserSettingsUpdateSchema(BaseModel):
+    """User settings update request"""
+    username: Optional[str] = None
+    dailyCalorieGoal: Optional[int] = None
+    proteinGoal: Optional[int] = None
+    carbsGoal: Optional[int] = None
+    fiberGoal: Optional[int] = None
+
+
 class UserResponseSchema(BaseModel):
     """User response schema"""
     id: str = Field(alias="_id")
     email: str
     username: str
-    dailyCalorieGoal: int
+    dailyCalorieGoal: int = 2000
+    proteinGoal: int = 150
+    carbsGoal: int = 200
+    fiberGoal: int = 25
     workoutStreak: int = 0
     createdAt: datetime
     

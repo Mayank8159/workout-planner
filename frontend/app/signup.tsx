@@ -71,7 +71,7 @@ export default function SignUpScreen() {
         className="flex-1"
       >
         <ScrollView 
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1, paddingTop: 20 }}
           className="flex-1"
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"

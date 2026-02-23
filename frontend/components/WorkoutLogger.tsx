@@ -251,7 +251,7 @@ export default function WorkoutLoggerScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="flex-1"
         >
-          <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 140 }}>
+          <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 140, paddingTop: 12 }}>
             {/* Header with Gradient Background */}
             <LinearGradient
               colors={['rgba(139, 92, 246, 0.15)', 'rgba(15, 23, 42, 0)']}

@@ -8,6 +8,9 @@ export interface User {
   username: string;
   email: string;
   dailyCalorieGoal?: number;
+  proteinGoal?: number;
+  carbsGoal?: number;
+  fiberGoal?: number;
   workoutStreak?: number;
   createdAt?: string;
 }
@@ -57,6 +60,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
             username: userData.username,
             email: userData.email,
             dailyCalorieGoal: userData.dailyCalorieGoal,
+            proteinGoal: userData.proteinGoal,
+            carbsGoal: userData.carbsGoal,
+            fiberGoal: userData.fiberGoal,
             workoutStreak: userData.workoutStreak,
             createdAt: userData.createdAt,
           });
@@ -102,6 +108,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         username: userData.username,
         email: userData.email,
         dailyCalorieGoal: userData.dailyCalorieGoal,
+        proteinGoal: userData.proteinGoal,
+        carbsGoal: userData.carbsGoal,
+        fiberGoal: userData.fiberGoal,
         workoutStreak: userData.workoutStreak,
         createdAt: userData.createdAt,
       });
@@ -138,6 +147,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         username: userData.username,
         email: userData.email,
         dailyCalorieGoal: userData.dailyCalorieGoal,
+        proteinGoal: userData.proteinGoal,
+        carbsGoal: userData.carbsGoal,
+        fiberGoal: userData.fiberGoal,
         workoutStreak: userData.workoutStreak,
         createdAt: userData.createdAt,
       });
@@ -191,6 +203,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           username: userData.username,
           email: userData.email,
           dailyCalorieGoal: userData.dailyCalorieGoal,
+          proteinGoal: userData.proteinGoal,
+          carbsGoal: userData.carbsGoal,
+          fiberGoal: userData.fiberGoal,
           workoutStreak: userData.workoutStreak,
           createdAt: userData.createdAt,
         });

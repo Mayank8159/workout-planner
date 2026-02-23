@@ -63,7 +63,7 @@ export default function LoginScreen() {
           keyboardDismissMode="on-drag"
           scrollEnabled={true}
         >
-          <View className="flex-1 justify-center px-6 py-12" style={{ paddingBottom: 100 }}>
+          <View className="flex-1 justify-center px-6 py-12" style={{ paddingBottom: 100, paddingTop: 20 }}>
             {/* Logo/Header */}
             <View className="items-center mb-12">
               <LinearGradient

@@ -41,7 +41,7 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#0f172a' }}>
-      <ScrollView style={{ flex: 1, backgroundColor: '#0f172a' }} contentContainerStyle={{ padding: 20, paddingBottom: 140 }}>
+      <ScrollView style={{ flex: 1, backgroundColor: '#0f172a' }} contentContainerStyle={{ padding: 20, paddingBottom: 140, paddingTop: 28 }}>
         {/* Header */}
         <LinearGradient
           colors={['rgba(236, 72, 153, 0.15)', 'rgba(236, 72, 153, 0.05)']}
@@ -156,6 +156,7 @@ export default function ProfileScreen() {
           </Text>
           
           <TouchableOpacity
+            onPress={() => router.push('/settings')}
             style={{
               marginBottom: 12,
             }}>
