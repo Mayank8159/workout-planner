@@ -1,3 +1,4 @@
+// @ts-ignore - NativeWind className support
 import React, { useState, useMemo } from "react";
 import {
   View,

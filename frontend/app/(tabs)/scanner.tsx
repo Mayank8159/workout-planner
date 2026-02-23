@@ -9,7 +9,7 @@ import {
   ScrollView,
   Modal,
 } from "react-native";
-import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 
@@ -144,7 +144,6 @@ export default function ScannerScreen() {
         <>
           <CameraView
             ref={cameraRef}
-            type={CameraType.back}
             className="flex-1"
             facing="back"
             autofocus="on"
