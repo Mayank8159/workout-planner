@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -130,27 +131,28 @@ export default function WorkoutLoggerScreen() {
   };
 
   return (
-    <LinearGradient colors={['#0f172a', '#1e293b']} className="flex-1">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
-      >
-        <ScrollView className="flex-1">
-          {/* Header */}
-          <View className="pt-12 pb-6 px-6">
-            <View className="flex-row justify-between items-center">
-              <View>
-                <Text className="text-white text-3xl font-bold">Workout Logger</Text>
-                <Text className="text-slate-400 text-sm mt-1">Track your exercises</Text>
-              </View>
-              <View className="bg-emerald-500/20 rounded-2xl px-4 py-2">
-                <Text className="text-emerald-500 font-bold">
-                  {exercises.reduce((acc, ex) => acc + ex.sets.filter(s => s.completed).length, 0)} /{' '}
-                  {exercises.reduce((acc, ex) => acc + ex.sets.length, 0)} sets
-                </Text>
+    <SafeAreaView className="flex-1 bg-slate-900">
+      <LinearGradient colors={['#0f172a', '#1e293b']} className="flex-1">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          className="flex-1"
+        >
+          <ScrollView className="flex-1">
+            {/* Header */}
+            <View className="pt-4 pb-6 px-6">
+              <View className="flex-row justify-between items-center">
+                <View>
+                  <Text className="text-white text-3xl font-bold">Workout Logger</Text>
+                  <Text className="text-slate-400 text-sm mt-1">Track your exercises</Text>
+                </View>
+                <View className="bg-emerald-500/20 rounded-2xl px-4 py-2">
+                  <Text className="text-emerald-500 font-bold">
+                    {exercises.reduce((acc, ex) => acc + ex.sets.filter(s => s.completed).length, 0)} /{' '}
+                    {exercises.reduce((acc, ex) => acc + ex.sets.length, 0)} sets
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
 
           {/* Add Exercise */}
           <View className="px-6 mb-6">
@@ -291,5 +293,6 @@ export default function WorkoutLoggerScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </LinearGradient>
+    </SafeAreaView>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Progress from 'react-native-progress';
@@ -58,23 +58,24 @@ export default function DashboardScreen() {
   const remaining = Math.max(0, nutritionData.goal - nutritionData.consumed);
 
   return (
-    <LinearGradient
-      colors={['#0f172a', '#1e293b']}
-      className="flex-1"
-    >
-      <ScrollView className="flex-1">
-        {/* Header */}
-        <View className="pt-12 pb-6 px-6">
-          <View className="flex-row justify-between items-center mb-2">
-            <View>
-              <Text className="text-slate-400 text-sm">Welcome back,</Text>
-              <Text className="text-white text-3xl font-bold">{user?.username || 'User'}</Text>
+    <SafeAreaView className="flex-1 bg-slate-900">
+      <LinearGradient
+        colors={['#0f172a', '#1e293b']}
+        className="flex-1"
+      >
+        <ScrollView className="flex-1">
+          {/* Header */}
+          <View className="pt-4 pb-6 px-6">
+            <View className="flex-row justify-between items-center mb-2">
+              <View>
+                <Text className="text-slate-400 text-sm">Welcome back,</Text>
+                <Text className="text-white text-3xl font-bold">{user?.username || 'User'}</Text>
+              </View>
+              <TouchableOpacity className="bg-slate-800 rounded-full p-3 border border-slate-700">
+                <MaterialIcons name="notifications-none" size={24} color="#10b981" />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity className="bg-slate-800 rounded-full p-3 border border-slate-700">
-              <MaterialIcons name="notifications-none" size={24} color="#10b981" />
-            </TouchableOpacity>
           </View>
-        </View>
 
         {/* Weekly Calendar Strip */}
         <View className="px-6 mb-6">
@@ -285,5 +286,6 @@ export default function DashboardScreen() {
         </View>
       </ScrollView>
     </LinearGradient>
+    </SafeAreaView>
   );
 }

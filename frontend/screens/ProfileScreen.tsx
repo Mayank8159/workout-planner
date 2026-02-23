@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Progress from 'react-native-progress';
@@ -94,29 +95,30 @@ export default function ProfileScreen() {
   const caloriePercentage = Math.round(calorieProgress * 100);
 
   return (
-    <ScrollView className="flex-1 bg-dark-bg">
-      <View className="px-6 pt-8 pb-8">
-        {/* Header with user avatar */}
-        <View className="flex-row items-center mb-8">
-          <View style={{
-            width: 64,
-            height: 64,
-            borderRadius: 32,
-            backgroundColor: 'rgba(168, 85, 247, 0.3)',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: 16,
-            borderWidth: 2,
-            borderColor: 'rgba(168, 85, 247, 0.6)',
-            shadowColor: '#a855f7',
-            shadowOpacity: 0.6,
-            shadowRadius: 12,
-          }}>
-            <MaterialIcons name="person" size={32} color="#06b6d4" />
-          </View>
-          <View className="flex-1">
-            <Text className="text-2xl font-bold text-cyan-400">
-              {user?.username || 'User'}
+    <SafeAreaView className="flex-1 bg-slate-900">
+      <ScrollView className="flex-1 bg-dark-bg">
+        <View className="px-6 pt-2 pb-8">
+          {/* Header with user avatar */}
+          <View className="flex-row items-center mb-8">
+            <View style={{
+              width: 64,
+              height: 64,
+              borderRadius: 32,
+              backgroundColor: 'rgba(168, 85, 247, 0.3)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: 16,
+              borderWidth: 2,
+              borderColor: 'rgba(168, 85, 247, 0.6)',
+              shadowColor: '#a855f7',
+              shadowOpacity: 0.6,
+              shadowRadius: 12,
+            }}>
+              <MaterialIcons name="person" size={32} color="#06b6d4" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-2xl font-bold text-cyan-400">
+                {user?.username || 'User'}
             </Text>
             <Text className="text-cyan-300 text-sm">{user?.email}</Text>
           </View>
@@ -329,5 +331,6 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }

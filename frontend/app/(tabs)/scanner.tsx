@@ -6,6 +6,7 @@ import {
   Alert,
   ActivityIndicator,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -39,25 +40,28 @@ export default function ScannerScreen() {
 
   if (!permission) {
     return (
-      <LinearGradient colors={['#0f172a', '#1e293b']} className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#10b981" />
-      </LinearGradient>
+      <SafeAreaView className="flex-1 bg-slate-900">
+        <LinearGradient colors={['#0f172a', '#1e293b']} className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="#10b981" />
+        </LinearGradient>
+      </SafeAreaView>
     );
   }
 
   if (!permission.granted) {
     return (
-      <LinearGradient colors={['#0f172a', '#1e293b']} className="flex-1 justify-center items-center px-6">
-        <View className="bg-slate-800 rounded-full p-6 mb-6">
-          <MaterialIcons name="camera-alt" size={64} color="#10b981" />
-        </View>
-        <Text className="text-white text-2xl font-bold mt-4 text-center mb-2">
-          Camera Permission Required
-        </Text>
-        <Text className="text-slate-400 text-center mt-2 mb-8 px-4">
-          We need camera access to scan food items for calorie detection
-        </Text>
-        <TouchableOpacity onPress={requestPermission}>
+      <SafeAreaView className="flex-1 bg-slate-900">
+        <LinearGradient colors={['#0f172a', '#1e293b']} className="flex-1 justify-center items-center px-6">
+          <View className="bg-slate-800 rounded-full p-6 mb-6">
+            <MaterialIcons name="camera-alt" size={64} color="#10b981" />
+          </View>
+          <Text className="text-white text-2xl font-bold mt-4 text-center mb-2">
+            Camera Permission Required
+          </Text>
+          <Text className="text-slate-400 text-center mt-2 mb-8 px-4">
+            We need camera access to scan food items for calorie detection
+          </Text>
+          <TouchableOpacity onPress={requestPermission}>
           <LinearGradient
             colors={['#10b981', '#059669']}
             className="rounded-2xl py-4 px-8"
@@ -67,6 +71,7 @@ export default function ScannerScreen() {
           </LinearGradient>
         </TouchableOpacity>
       </LinearGradient>
+      </SafeAreaView>
     );
   }
 
@@ -167,31 +172,32 @@ export default function ScannerScreen() {
   };
 
   return (
-    <View className="flex-1 bg-slate-900">
-      {!capturedImage ? (
-        <>
-          <CameraView
-            ref={cameraRef}
-            className="flex-1"
-            facing="back"
-            autofocus="on"
-          >
-            {/* Scanner Frame */}
-            <View className="flex-1 justify-center items-center">
-              <View className="w-80 h-80 border-4 border-emerald-500 rounded-3xl overflow-hidden">
-                {isScanning && <ScannerLaser />}
+    <SafeAreaView className="flex-1 bg-slate-900">
+      <View className="flex-1 bg-slate-900">
+        {!capturedImage ? (
+          <>
+            <CameraView
+              ref={cameraRef}
+              className="flex-1"
+              facing="back"
+              autofocus="on"
+            >
+              {/* Scanner Frame */}
+              <View className="flex-1 justify-center items-center">
+                <View className="w-80 h-80 border-4 border-emerald-500 rounded-3xl overflow-hidden">
+                  {isScanning && <ScannerLaser />}
+                </View>
+                <Text className="text-white text-center mt-6 text-lg px-8">
+                  Position food within the frame
+                </Text>
               </View>
-              <Text className="text-white text-center mt-6 text-lg px-8">
-                Position food within the frame
-              </Text>
-            </View>
-          </CameraView>
+            </CameraView>
 
-          {/* Header */}
-          <View className="absolute top-0 left-0 right-0 pt-12 pb-6 px-6 bg-slate-900/80">
-            <Text className="text-white text-3xl font-bold">AI Scanner</Text>
-            <Text className="text-slate-400 text-sm mt-1">Point at food to detect calories</Text>
-          </View>
+            {/* Header */}
+            <View className="absolute top-0 left-0 right-0 pt-4 pb-6 px-6 bg-slate-900/80">
+              <Text className="text-white text-3xl font-bold">AI Scanner</Text>
+              <Text className="text-slate-400 text-sm mt-1">Point at food to detect calories</Text>
+            </View>
 
           {/* Bottom Controls */}
           <View className="absolute bottom-0 left-0 right-0 pb-10 px-6 bg-slate-900/80 pt-6">
@@ -244,6 +250,7 @@ export default function ScannerScreen() {
           loading={isLoading}
         />
       )}
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
