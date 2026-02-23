@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -31,10 +31,22 @@ interface SetData {
   completed: boolean;
 }
 
+interface SavedWorkout {
+  id: string;
+  exercise: string;
+  sets: number;
+  reps: number;
+  weight: number;
+  duration: number;
+  date: string;
+}
+
 export default function WorkoutLoggerScreen() {
   const { isAuthenticated } = useUser();
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [savedWorkouts, setSavedWorkouts] = useState<SavedWorkout[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingWorkouts, setIsFetchingWorkouts] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -45,6 +57,29 @@ export default function WorkoutLoggerScreen() {
     reps: '',
     sets: '',
   });
+
+  // Fetch today's saved workouts on mount
+  useEffect(() => {
+    const fetchTodayWorkouts = async () => {
+      if (!isAuthenticated) return;
+      
+      try {
+        setIsFetchingWorkouts(true);
+        const today = new Date().toISOString().split('T')[0];
+        const data = await dataAPI.getDailyData(today);
+        
+        if (data?.workouts && Array.isArray(data.workouts)) {
+          setSavedWorkouts(data.workouts);
+        }
+      } catch (err) {
+        console.error('Error fetching workouts:', err);
+      } finally {
+        setIsFetchingWorkouts(false);
+      }
+    };
+    
+    fetchTodayWorkouts();
+  }, [isAuthenticated]);
 
   const toggleSetComplete = (exerciseId: string, setId: string) => {
     setExercises(prev =>
@@ -144,13 +179,13 @@ export default function WorkoutLoggerScreen() {
       return;
     }
 
-    // Check if any exercise has set data
-    const hasSetData = exercises.some(ex =>
-      ex.sets.some(set => set.reps.trim() || set.weight.trim() || set.duration.trim())
+    // Check if any exercise has completed sets
+    const hasCompletedSets = exercises.some(ex =>
+      ex.sets.some(set => set.completed)
     );
 
-    if (!hasSetData) {
-      setError('Please add reps, weight, or duration to at least one set');
+    if (!hasCompletedSets) {
+      setError('Please check at least one set to save');
       return;
     }
 
@@ -161,16 +196,15 @@ export default function WorkoutLoggerScreen() {
 
       const today = new Date().toISOString().split('T')[0];
       
-      // Save all exercises
+      // Save only completed sets
       for (const exercise of exercises) {
-        // Count how many sets have actual data
+        // Count how many sets are completed
         let setCount = 0;
         
         for (const set of exercise.sets) {
-          const hasData = set.reps.trim() || set.weight.trim() || set.duration.trim();
-          if (hasData) {
+          if (set.completed) {
             setCount++;
-            // Send each set as a separate workout entry
+            // Send each completed set as a separate workout entry
             await dataAPI.addWorkout({
               exercise: exercise.name,
               sets: setCount,
@@ -184,9 +218,16 @@ export default function WorkoutLoggerScreen() {
 
       setSuccessMessage('Workout saved successfully!');
       
+      // Refresh the saved workouts list
+      const updatedData = await dataAPI.getDailyData(today);
+      if (updatedData?.workouts && Array.isArray(updatedData.workouts)) {
+        setSavedWorkouts(updatedData.workouts);
+      }
+      
       // Clear exercises after successful save
+      setExercises([]);
+      
       setTimeout(() => {
-        setExercises([]);
         setSuccessMessage(null);
       }, 2000);
     } catch (err: any) {
@@ -209,7 +250,7 @@ export default function WorkoutLoggerScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="flex-1"
         >
-          <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
+          <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 140 }}>
             {/* Header */}
             <View className="pt-6 pb-6 px-6">
               <View className="flex-row justify-between items-center">
@@ -217,10 +258,10 @@ export default function WorkoutLoggerScreen() {
                   <Text className="text-white text-3xl font-bold">Workout Logger</Text>
                   <Text className="text-slate-400 text-sm mt-1">Track your exercises</Text>
                 </View>
-                <View className="bg-emerald-500/20 rounded-2xl px-4 py-2">
-                  <Text className="text-emerald-500 font-bold">
-                    {exercises.reduce((acc, ex) => acc + ex.sets.filter(s => s.completed).length, 0)} /{' '}
-                    {exercises.reduce((acc, ex) => acc + ex.sets.length, 0)} sets
+                <View className="bg-gray-500/20 rounded-2xl px-4 py-2">
+                  <Text className="text-gray-300 font-bold">
+                    {savedWorkouts.length + exercises.reduce((acc, ex) => acc + ex.sets.filter(s => s.completed).length, 0)} /{' '}
+                    {savedWorkouts.length + exercises.reduce((acc, ex) => acc + ex.sets.length, 0)} completed
                   </Text>
                 </View>
               </View>
@@ -235,29 +276,60 @@ export default function WorkoutLoggerScreen() {
 
             {/* Success Message */}
             {successMessage && (
-              <View className="mx-6 mb-4 bg-emerald-500/20 border border-emerald-500 rounded-xl p-3">
-                <Text className="text-emerald-300 text-sm">{successMessage}</Text>
+              <View className="mx-6 mb-4 bg-gray-500/20 border border-gray-500 rounded-xl p-3">
+                <Text className="text-gray-200 text-sm">{successMessage}</Text>
               </View>
             )}
 
             {/* Add Exercise Button */}
             <View className="px-6 mb-6">
               <TouchableOpacity onPress={() => setShowModal(true)}>
-                <LinearGradient
-                  colors={['#10b981', '#059669']}
-                  className="rounded-2xl py-4 items-center flex-row justify-center"
+                <View
+                  className="rounded-2xl py-4 items-center flex-row justify-center bg-gray-300 border-2 border-gray-400"
                   style={{
-                    shadowColor: '#10b981',
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                    elevation: 4,
+                    shadowColor: '#000000',
+                    shadowOpacity: 0.45,
+                    shadowRadius: 10,
+                    elevation: 8,
                   }}
                 >
-                  <MaterialIcons name="add" size={24} color="#0f172a" />
-                  <Text className="text-slate-900 text-lg font-bold ml-2">Add Exercise</Text>
-                </LinearGradient>
+                  <MaterialIcons name="add" size={24} color="#6B21A8" />
+                  <Text className="text-gray-800 text-lg font-bold ml-2">Add Exercise</Text>
+                </View>
               </TouchableOpacity>
             </View>
+
+            {/* Saved Workouts Section */}
+            {isFetchingWorkouts ? (
+              <View className="px-6 mb-6 items-center">
+                <ActivityIndicator size="small" color="#E5E7EB" />
+              </View>
+            ) : savedWorkouts.length > 0 ? (
+              <View className="px-6 mb-6">
+                <Text className="text-white text-lg font-bold mb-3">Today's Workouts</Text>
+                {savedWorkouts.map((workout, index) => (
+                  <View
+                    key={`${workout.id}-${index}`}
+                    className="bg-slate-800 border border-gray-500/30 rounded-xl p-4 mb-3 flex-row items-center justify-between"
+                  >
+                    <View className="flex-row items-center flex-1">
+                      <View className="bg-gray-500/20 rounded-full p-2 mr-3">
+                        <MaterialIcons name="check-circle" size={20} color="#E5E7EB" />
+                      </View>
+                      <View>
+                        <Text className="text-white font-semibold">{workout.exercise}</Text>
+                        <Text className="text-slate-400 text-sm">
+                          {workout.reps > 0 && `${workout.reps} reps`}
+                          {workout.weight > 0 && ` • ${workout.weight} lbs`}
+                          {workout.duration > 0 && ` • ${workout.duration} min`}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text className="text-orange-400 font-bold text-sm">Set {workout.sets}</Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
 
             {/* Exercise List */}
             <View className="px-6 pb-8">
@@ -276,8 +348,8 @@ export default function WorkoutLoggerScreen() {
                     {/* Exercise Header */}
                     <View className="flex-row justify-between items-center mb-4">
                       <View className="flex-row items-center flex-1">
-                        <View className="bg-emerald-500/20 rounded-full p-2 mr-3">
-                          <MaterialIcons name="fitness-center" size={20} color="#10b981" />
+                        <View className="bg-gray-500/20 rounded-full p-2 mr-3">
+                          <MaterialIcons name="fitness-center" size={20} color="#E5E7EB" />
                         </View>
                         <Text className="text-white text-lg font-bold">{exercise.name}</Text>
                       </View>
@@ -352,7 +424,7 @@ export default function WorkoutLoggerScreen() {
                           <View
                             className={`w-8 h-8 rounded-lg border-2 items-center justify-center ${
                               set.completed
-                                ? 'bg-emerald-500 border-emerald-500'
+                                ? 'bg-gray-400 border-gray-400'
                                 : 'border-slate-600'
                             }`}
                           >
@@ -369,8 +441,8 @@ export default function WorkoutLoggerScreen() {
                       onPress={() => addSet(exercise.id)}
                       className="bg-slate-700 rounded-xl py-2 mt-2 flex-row items-center justify-center"
                     >
-                      <MaterialIcons name="add" size={18} color="#10b981" />
-                      <Text className="text-emerald-500 ml-1 font-semibold">Add Set</Text>
+                      <MaterialIcons name="add" size={18} color="#E5E7EB" />
+                      <Text className="text-gray-300 ml-1 font-semibold">Add Set</Text>
                     </TouchableOpacity>
                   </View>
                 ))
@@ -380,14 +452,13 @@ export default function WorkoutLoggerScreen() {
             {/* Save Workout Button */}
             <View className="px-6 pb-8">
               <TouchableOpacity onPress={saveWorkout} disabled={isLoading}>
-                <LinearGradient
-                  colors={['#10b981', '#059669']}
-                  className="rounded-2xl py-4 items-center"
+                <View
+                  className="rounded-2xl py-4 items-center bg-gray-300 border-2 border-gray-400"
                   style={{
-                    shadowColor: '#10b981',
-                    shadowOpacity: 0.4,
-                    shadowRadius: 10,
-                    elevation: 5,
+                    shadowColor: '#000000',
+                    shadowOpacity: 0.5,
+                    shadowRadius: 8,
+                    elevation: 10,
                     opacity: isLoading ? 0.6 : 1,
                   }}
                 >
@@ -396,7 +467,7 @@ export default function WorkoutLoggerScreen() {
                   ) : (
                     <Text className="text-slate-900 text-lg font-bold">Save Workout</Text>
                   )}
-                </LinearGradient>
+                </View>
               </TouchableOpacity>
             </View>
           </ScrollView>
@@ -466,7 +537,7 @@ export default function WorkoutLoggerScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={addExerciseFromForm}
-                  className="flex-1 bg-emerald-500 rounded-xl py-3"
+                  className="flex-1 bg-gray-400 rounded-xl py-3"
                 >
                   <Text className="text-slate-900 text-center font-bold">Add</Text>
                 </TouchableOpacity>

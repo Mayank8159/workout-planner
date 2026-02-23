@@ -43,7 +43,7 @@ export const ScannerLaser = () => {
       ]}
     >
       <LinearGradient
-        colors={['transparent', '#10b981', '#10b981', 'transparent']}
+        colors={['transparent', '#E5E7EB', '#E5E7EB', 'transparent']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.gradient}
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     flex: 1,
-    shadowColor: '#10b981',
+    shadowColor: '#E5E7EB',
     shadowOpacity: 0.8,
     shadowRadius: 10,
     elevation: 5,

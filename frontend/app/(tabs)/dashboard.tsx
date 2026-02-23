@@ -166,7 +166,7 @@ export default function DashboardScreen() {
   return (
     <SafeAreaView className="flex-1 bg-slate-900">
       <LinearGradient colors={['#0f172a', '#1e293b']} className="flex-1">
-        <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
+        <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 140 }}>
           {/* Header */}
           <View className="pt-6 pb-6 px-6">
             <View className="flex-row justify-between items-center mb-2">
@@ -175,7 +175,7 @@ export default function DashboardScreen() {
                 <Text className="text-white text-3xl font-bold">{user?.username || 'User'}</Text>
               </View>
               <TouchableOpacity className="bg-slate-800 rounded-full p-3 border border-slate-700">
-                <MaterialIcons name="notifications-none" size={24} color="#10b981" />
+                <MaterialIcons name="notifications-none" size={24} color="#E5E7EB" />
               </TouchableOpacity>
             </View>
           </View>
@@ -190,7 +190,7 @@ export default function DashboardScreen() {
                   onPress={() => setSelectedDate(day.date)}
                   className={`mr-3 items-center justify-center rounded-2xl px-4 py-3 ${
                     day.isToday
-                      ? 'bg-emerald-500'
+                      ? 'bg-gray-400'
                       : selectedDate.toDateString() === day.date.toDateString()
                       ? 'bg-slate-700'
                       : 'bg-slate-800 border border-slate-700'
@@ -211,7 +211,7 @@ export default function DashboardScreen() {
           {/* Loading State */}
           {isLoading ? (
             <View className="px-6 mb-6">
-              <ActivityIndicator size="large" color="#10b981" />
+                <ActivityIndicator size="large" color="#E5E7EB" />
               <Text className="text-slate-400 text-center mt-2">Loading your data...</Text>
             </View>
           ) : error ? (
@@ -229,7 +229,7 @@ export default function DashboardScreen() {
                       size={180}
                       progress={Math.min(progress, 1)}
                       thickness={12}
-                      color="#10b981"
+                      color="#E5E7EB"
                       unfilledColor="#334155"
                       borderWidth={0}
                       showsText={false}
@@ -240,7 +240,7 @@ export default function DashboardScreen() {
                         {nutritionData.total_calories}
                       </Text>
                       <Text className="text-slate-400 text-sm text-center">of {dailyCalorieGoal}</Text>
-                      <Text className="text-emerald-500 text-xs text-center mt-1">calories</Text>
+                      <Text className="text-gray-300 text-xs text-center mt-1">calories</Text>
                     </View>
                   </View>
 
@@ -253,14 +253,14 @@ export default function DashboardScreen() {
                       <Text className="text-slate-400 text-xs">Carbs</Text>
                     </View>
                     <View className="items-center flex-1">
-                      <View className="bg-emerald-500/20 rounded-full px-3 py-1 mb-2">
-                        <Text className="text-emerald-400 font-bold">{Math.round(nutritionData.total_protein)}g</Text>
+                      <View className="bg-gray-500/20 rounded-full px-3 py-1 mb-2">
+                        <Text className="text-gray-300 font-bold">{Math.round(nutritionData.total_protein)}g</Text>
                       </View>
                       <Text className="text-slate-400 text-xs">Protein</Text>
                     </View>
                     <View className="items-center flex-1">
-                      <View className="bg-yellow-500/20 rounded-full px-3 py-1 mb-2">
-                        <Text className="text-yellow-400 font-bold">{Math.round(nutritionData.total_fat)}g</Text>
+                      <View className="bg-gray-500/20 rounded-full px-3 py-1 mb-2">
+                        <Text className="text-gray-300 font-bold">{Math.round(nutritionData.total_fat)}g</Text>
                       </View>
                       <Text className="text-slate-400 text-xs">Fat</Text>
                     </View>
@@ -269,7 +269,7 @@ export default function DashboardScreen() {
                   {/* Remaining Calories */}
                   <View className="mt-4 pt-4 border-t border-slate-700">
                     <Text className="text-slate-400 text-sm text-center">
-                      <Text className="text-emerald-500 font-bold">{Math.round(remaining)} calories</Text> remaining today
+                      <Text className="text-gray-300 font-bold">{Math.round(remaining)} calories</Text> remaining today
                     </Text>
                   </View>
                 </View>
@@ -282,21 +282,20 @@ export default function DashboardScreen() {
                     onPress={() => router.push('/(tabs)/scanner')}
                     className="flex-1"
                   >
-                    <LinearGradient
-                      colors={['#10b981', '#059669']}
-                      className="rounded-2xl p-4 items-center"
-                      style={{ shadowColor: '#10b981', shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 }}
+                    <View
+                      className="rounded-2xl p-4 items-center bg-gray-300 border-2 border-gray-400"
+                      style={{ shadowColor: '#000000', shadowOpacity: 0.4, shadowRadius: 8, elevation: 8 }}
                     >
                       <MaterialIcons name="photo-camera" size={28} color="#0f172a" />
                       <Text className="text-slate-900 font-bold mt-2">Scan Food</Text>
-                    </LinearGradient>
+                    </View>
                   </TouchableOpacity>
                   <TouchableOpacity 
                     onPress={() => router.push('/(tabs)/workout')}
                     className="flex-1"
                   >
                     <View className="bg-slate-800 border border-slate-700 rounded-2xl p-4 items-center">
-                      <MaterialIcons name="fitness-center" size={28} color="#10b981" />
+                      <MaterialIcons name="fitness-center" size={28} color="#E5E7EB" />
                       <Text className="text-white font-bold mt-2">Log Workout</Text>
                     </View>
                   </TouchableOpacity>
@@ -308,8 +307,8 @@ export default function DashboardScreen() {
                 <View className="flex-row justify-between items-center mb-4">
                   <Text className="text-white text-lg font-semibold">Today's Workouts</Text>
                   {upcomingWorkouts.length > 0 && (
-                    <TouchableOpacity>
-                      <Text className="text-emerald-500 text-sm">View All</Text>
+                    <TouchableOpacity onPress={() => router.push('/(tabs)/workout')}>
+                      <Text className="text-gray-300 text-sm">View All</Text>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -319,8 +318,8 @@ export default function DashboardScreen() {
                     <View key={index} className="bg-slate-800 border border-slate-700 rounded-2xl p-4 mb-3">
                       <View className="flex-row justify-between items-center mb-2">
                         <View className="flex-row items-center">
-                          <View className="bg-emerald-500/20 rounded-full p-2 mr-3">
-                            <MaterialIcons name="fitness-center" size={20} color="#10b981" />
+                          <View className="bg-gray-500/20 rounded-full p-2 mr-3">
+                            <MaterialIcons name="fitness-center" size={20} color="#E5E7EB" />
                           </View>
                           <View>
                             <Text className="text-white font-bold">{workout.exercise}</Text>
@@ -355,7 +354,7 @@ export default function DashboardScreen() {
                   <Text className="text-white text-lg font-semibold">Recent Scans</Text>
                   {recentScans.length > 0 && (
                     <TouchableOpacity>
-                      <Text className="text-emerald-500 text-sm">View All</Text>
+                      <Text className="text-gray-300 text-sm">View All</Text>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -365,12 +364,12 @@ export default function DashboardScreen() {
                     <View key={index} className="bg-slate-800 border border-slate-700 rounded-2xl p-4 mb-3">
                       <View className="flex-row justify-between items-center">
                         <View className="flex-row items-center flex-1">
-                          <View className="bg-emerald-500/20 rounded-xl p-3 mr-3">
-                            <MaterialIcons name="restaurant" size={24} color="#10b981" />
+                          <View className="bg-gray-500/20 rounded-xl p-3 mr-3">
+                            <MaterialIcons name="restaurant" size={24} color="#E5E7EB" />
                           </View>
                           <View className="flex-1">
                             <Text className="text-white font-bold capitalize">{scan.name.replace(/_/g, ' ')}</Text>
-                            <Text className="text-emerald-500 text-sm">
+                            <Text className="text-gray-300 text-sm">
                               {scan.calories} cal • {Math.round(scan.protein)}g Protein
                             </Text>
                             <Text className="text-slate-400 text-xs mt-1">{getTimeAgo(scan.date)}</Text>

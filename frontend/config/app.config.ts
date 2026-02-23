@@ -11,7 +11,7 @@ export const APP_CONFIG = {
   COLORS: {
     primary: '#1f2937',
     secondary: '#3b82f6',
-    accent: '#10b981',
+    accent: '#E5E7EB',
     danger: '#ef4444',
     warning: '#f59e0b',
     dark_bg: '#111827',

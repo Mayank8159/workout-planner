@@ -63,7 +63,7 @@ export default function LoginScreen() {
           <View className="flex-1 justify-center px-6 py-12">
             {/* Logo/Header */}
             <View className="items-center mb-12">
-              <View className="bg-emerald-500 rounded-full p-4 mb-4">
+              <View className="bg-gray-400 rounded-full p-4 mb-4">
                 <MaterialIcons name="fitness-center" size={48} color="#0f172a" />
               </View>
               <Text className="text-white text-4xl font-bold mb-2">Welcome Back</Text>
@@ -121,7 +121,7 @@ export default function LoginScreen() {
 
             {/* Forgot Password */}
             <TouchableOpacity className="items-end mb-6">
-              <Text className="text-emerald-500 text-sm">Forgot Password?</Text>
+              <Text className="text-gray-300 text-sm">Forgot Password?</Text>
             </TouchableOpacity>
 
             {/* Login Button */}
@@ -130,24 +130,23 @@ export default function LoginScreen() {
               disabled={loading}
               className="mb-6"
             >
-              <LinearGradient
-                colors={['#10b981', '#059669']}
-                className="rounded-2xl py-4 items-center"
-                style={{ shadowColor: '#10b981', shadowOpacity: 0.4, shadowRadius: 10, elevation: 5 }}
+              <View
+                className="rounded-2xl py-4 items-center bg-gray-300 border-2 border-gray-400"
+                style={{ shadowColor: '#000000', shadowOpacity: 0.45, shadowRadius: 10, elevation: 8 }}
               >
                 {loading ? (
                   <ActivityIndicator color="#0f172a" />
                 ) : (
-                  <Text className="text-slate-900 text-base font-bold">Sign In</Text>
+                  <Text className="text-slate-900 text-base font-bold\">Sign In</Text>
                 )}
-              </LinearGradient>
+              </View>
             </TouchableOpacity>
 
             {/* Sign Up Link */}
             <View className="flex-row justify-center">
               <Text className="text-slate-400">Don't have an account? </Text>
               <TouchableOpacity onPress={() => router.push('/signup')}>
-                <Text className="text-emerald-500 font-semibold">Sign Up</Text>
+                <Text className="text-gray-300 font-semibold">Sign Up</Text>
               </TouchableOpacity>
             </View>
           </View>

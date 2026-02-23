@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 export default function SplashScreen() {
   const animatedValue = React.useRef(new Animated.Value(0)).current;
+  const pulseAnim = React.useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     Animated.loop(
@@ -21,12 +22,29 @@ export default function SplashScreen() {
         }),
       ])
     ).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.1,
+          duration: 1500,
+          useNativeDriver: false,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: false,
+        }),
+      ])
+    ).start();
   }, []);
 
   const loaderWidth = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: ['0%', '100%'],
   });
+
+  const scale = pulseAnim;
 
   return (
     <LinearGradient
@@ -37,28 +55,30 @@ export default function SplashScreen() {
     >
       {/* Center Content */}
       <View className="flex-1 items-center justify-center px-6">
-        {/* Logo Circle */}
-        <View className="mb-8 items-center">
-          <LinearGradient
-            colors={['#10b981', '#059669']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+        {/* Animated Silver Logo Circle */}
+        <Animated.View
+          style={{
+            marginBottom: 32,
+            transform: [{ scale }],
+          }}
+        >
+          <View
             style={{
               width: 140,
               height: 140,
               borderRadius: 70,
               justifyContent: 'center',
               alignItems: 'center',
-              marginBottom: 32,
-              shadowColor: '#10b981',
-              shadowOpacity: 0.5,
-              shadowRadius: 15,
-              elevation: 10,
+              backgroundColor: '#E5E7EB',
+              shadowColor: '#E5E7EB',
+              shadowOpacity: 0.6,
+              shadowRadius: 20,
+              elevation: 12,
             }}
           >
-            <MaterialIcons name="sports-bar" size={80} color="#ffffff" />
-          </LinearGradient>
-        </View>
+            <MaterialIcons name="fitness-center" size={70} color="#6B21A8" />
+          </View>
+        </Animated.View>
 
         {/* Main Text */}
         <Text className="text-white text-3xl font-bold text-center mb-2">
@@ -66,15 +86,15 @@ export default function SplashScreen() {
         </Text>
 
         {/* Subtext */}
-        <Text className="text-slate-400 text-base text-center mb-12">
+        <Text className="text-gray-400 text-base text-center mb-12">
           Your AI-powered fitness companion
         </Text>
 
-        {/* Animated Dots */}
-        <View className="flex-row gap-1 mb-16">
-          <View className="w-2 h-2 rounded-full bg-emerald-500" />
-          <View className="w-2 h-2 rounded-full bg-emerald-500 opacity-50" />
-          <View className="w-2 h-2 rounded-full bg-emerald-500 opacity-25" />
+        {/* Animated Pulsing Dots */}
+        <View className="flex-row gap-3 mb-16">
+          <View className="w-3 h-3 rounded-full bg-gray-300" />
+          <View className="w-3 h-3 rounded-full bg-gray-300 opacity-60" />
+          <View className="w-3 h-3 rounded-full bg-gray-300 opacity-30" />
         </View>
       </View>
 
@@ -84,9 +104,9 @@ export default function SplashScreen() {
           style={{
             width: loaderWidth,
             height: '100%',
-            backgroundColor: '#10b981',
-            shadowColor: '#10b981',
-            shadowOpacity: 0.6,
+            backgroundColor: '#E5E7EB',
+            shadowColor: '#E5E7EB',
+            shadowOpacity: 0.7,
             shadowRadius: 10,
             elevation: 5,
           }}

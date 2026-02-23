@@ -31,6 +31,9 @@ async def scan_food(
     
     Returns:
         FoodPredictionSchema with food item, calories, and confidence
+    
+    Raises:
+        HTTPException: If the scanned item is not a food item
     """
     try:
         # Read uploaded file
@@ -74,6 +77,30 @@ async def scan_food(
             best_prediction = max(food_predictions, key=lambda x: x["confidence"])
             food_item = best_prediction["name"]
             confidence = best_prediction["confidence"]
+        
+        # Validate that the prediction is actually a food item and has reasonable confidence
+        supported_foods = get_all_food_classes()
+        food_key = food_item.lower().replace(" ", "_").replace("-", "_")
+        
+        # Check if food is in supported foods or has high confidence
+        is_valid_food = food_key in supported_foods or any(
+            food_key in food or food in food_key for food in supported_foods
+        )
+        
+        # Require minimum 30% confidence for any food, 60% for unknown foods
+        min_confidence = 0.3 if is_valid_food else 0.6
+        
+        if confidence < min_confidence:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Please scan a food item. The image does not appear to contain food."
+            )
+        
+        if not is_valid_food and confidence < 0.6:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Unable to identify food item. Please ensure you're scanning actual food."
+            )
         
         # Get complete nutrition info
         nutrition = get_food_nutrition(food_item)

@@ -46,7 +46,7 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#0f172a' }}>
-      <ScrollView style={{ flex: 1, backgroundColor: '#0f172a' }} contentContainerStyle={{ padding: 20 }}>
+      <ScrollView style={{ flex: 1, backgroundColor: '#0f172a' }} contentContainerStyle={{ padding: 20, paddingBottom: 140 }}>
         {/* Header */}
         <View style={{ marginBottom: 30 }}>
           <Text style={{ fontSize: 28, fontWeight: '700', color: '#ffffff', marginBottom: 8 }}>
@@ -75,12 +75,12 @@ export default function ProfileScreen() {
                 width: 60,
                 height: 60,
                 borderRadius: 30,
-                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                backgroundColor: 'rgba(229, 231, 235, 0.2)',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginRight: 16,
               }}>
-              <MaterialIcons name="person" size={32} color="#10b981" />
+              <MaterialIcons name="person" size={32} color="#E5E7EB" />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 18, fontWeight: '700', color: '#ffffff' }}>
@@ -148,7 +148,7 @@ export default function ProfileScreen() {
               marginBottom: 12,
             }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialIcons name="settings" size={20} color="#10b981" />
+            <MaterialIcons name="settings" size={24} color="#E5E7EB" />
               <Text style={{ fontSize: 15, fontWeight: '600', color: '#e2e8f0', marginLeft: 12 }}>
                 Settings
               </Text>
@@ -168,7 +168,7 @@ export default function ProfileScreen() {
               borderColor: 'rgba(51, 65, 85, 0.5)',
             }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialIcons name="help" size={20} color="#10b981" />
+              <MaterialIcons name="help" size={20} color="#E5E7EB" />
               <Text style={{ fontSize: 15, fontWeight: '600', color: '#e2e8f0', marginLeft: 12 }}>
                 Help & Support
               </Text>
