@@ -152,12 +152,25 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = async () => {
     try {
+      console.log('🚪 Starting logout process...');
+      
+      // 1. Remove token from secure storage
       await secureStorage.removeToken();
+      console.log('✓ Token removed from storage');
+      
+      // 2. Clear state variables
+      console.log('🔄 Clearing auth state...');
       setUser(null);
       setToken(null);
       setIsAuthenticated(false);
+      console.log('✓ Auth state cleared');
+      
+      // 3. Small delay to ensure state updates propagate
+      await new Promise(resolve => setTimeout(resolve, 100));
+      console.log('✓ Logout complete - state will trigger navigation');
+      
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error('❌ Logout failed:', error);
       throw error;
     }
   };

@@ -3,45 +3,29 @@ import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Alert } from 'r
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useUser } from '@/context/UserContext';
-import { useRouter } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 
 export default function ProfileScreen() {
   const { user, logout } = useUser();
-  const router = useRouter();
 
-  const handleLogout = async () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => {},
-          style: 'cancel',
-        },
-        {
-          text: 'Logout',
-          onPress: async () => {
-            try {
-              // Clear stored tokens and user data
-              await SecureStore.deleteItemAsync('accessToken');
-              await SecureStore.deleteItemAsync('refreshToken');
-              
-              // Call logout from context
-              logout();
-              
-              // Navigate to login
-              router.replace('/login');
-            } catch (error) {
-              console.error('Logout error:', error);
-              Alert.alert('Error', 'Failed to logout. Please try again.');
-            }
-          },
-          style: 'destructive',
-        },
-      ]
-    );
+  const handleLogout = () => {
+    console.log('🔴 LOGOUT BUTTON PRESSED - handleLogout called!');
+    
+    // Use window.confirm on web, Alert on native
+    const confirmed = window.confirm ? window.confirm('Are you sure you want to logout?') : true;
+    
+    if (confirmed) {
+      console.log('🚪 User confirmed logout, executing logout()...');
+      logout()
+        .then(() => {
+          console.log('✓ Logout complete - root layout will redirect to login');
+        })
+        .catch((error) => {
+          console.error('❌ Logout error:', error);
+          if (window.alert) window.alert('Failed to logout. Please try again.');
+        });
+    } else {
+      console.log('⏸️ User cancelled logout');
+    }
   };
 
   return (

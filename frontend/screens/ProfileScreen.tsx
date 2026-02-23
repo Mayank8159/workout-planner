@@ -73,11 +73,19 @@ export default function ProfileScreen() {
           onPress: async () => {
             setLoggingOut(true);
             try {
+              console.log('Starting logout...');
+              // Call logout from context - updates auth state
               await logout();
-              // Navigation will be handled by the app's auth flow
+              console.log('Logout complete, context state updated');
+              
+              // Small delay to ensure state propagates
+              await new Promise(resolve => setTimeout(resolve, 500));
+              
+              console.log('Auth state should now be false, app routing will redirect');
+              // The app's root layout will detect isAuthenticated=false and redirect to login
             } catch (error) {
-              Alert.alert('Error', 'Failed to logout');
-            } finally {
+              console.error('Logout error:', error);
+              Alert.alert('Logout Error', 'Failed to logout. Please try again.');
               setLoggingOut(false);
             }
           },

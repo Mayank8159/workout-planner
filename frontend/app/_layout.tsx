@@ -20,19 +20,34 @@ function RootLayoutContent() {
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading) {
+      console.log('⏳ Auth still loading...');
+      return;
+    }
 
+    console.log('🔐 Auth check - isAuthenticated:', isAuthenticated, 'route:', segments[0]);
+
+    // Determine if user is trying to access protected vs public routes
     const inAuthGroup = segments[0] === '(tabs)';
     const inAuthScreen = segments[0] === 'login' || segments[0] === 'signup';
+    const isOnPublicRoute = !inAuthGroup;
 
     if (!isAuthenticated && inAuthGroup) {
-      // Redirect to login if not authenticated and trying to access protected routes
+      // User is NOT authenticated but trying to access protected routes
+      console.log('❌ Not authenticated, redirecting to login...');
+      router.replace('/login');
+    } else if (!isAuthenticated && !inAuthScreen && isOnPublicRoute) {
+      // Not authenticated and not on auth screens - go to login
+      console.log('⚠️ Unprotected route accessed without auth, redirecting to login...');
       router.replace('/login');
     } else if (isAuthenticated && inAuthScreen) {
-      // Redirect to main app if authenticated and on login/signup screen
+      // IS authenticated but on login/signup screen
+      console.log('✓ Authenticated on login screen, redirecting to dashboard...');
       router.replace('/(tabs)/dashboard');
+    } else {
+      console.log('✓ Auth state valid for current route');
     }
-  }, [isAuthenticated, isLoading]);
+  }, [isAuthenticated, isLoading, segments]);
 
   // Show splash screen while initializing
   if (isLoading) {
