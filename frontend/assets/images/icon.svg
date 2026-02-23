@@ -1,0 +1,79 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dumbbellGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bgGradient)"/>
+
+  <!-- Accent gradient overlay -->
+  <circle cx="512" cy="512" r="500" fill="none" stroke="url(#dumbbellGradient)" stroke-width="2" opacity="0.3"/>
+
+  <!-- Center Circle with Glassmorphism -->
+  <circle cx="512" cy="512" r="420" fill="#111827" opacity="0.4"/>
+  <circle cx="512" cy="512" r="420" fill="none" stroke="url(#dumbbellGradient)" stroke-width="3" opacity="0.5"/>
+
+  <!-- Left Dumbbell Plate -->
+  <g>
+    <!-- Outer ring -->
+    <circle cx="280" cy="512" r="90" fill="url(#dumbbellGradient)" opacity="0.9"/>
+    <!-- Inner highlight -->
+    <circle cx="280" cy="512" r="85" fill="url(#dumbbellGradient)" opacity="0.4"/>
+    <!-- Center detail -->
+    <circle cx="280" cy="512" r="70" fill="none" stroke="url(#accentGradient)" stroke-width="4" opacity="0.6"/>
+  </g>
+
+  <!-- Bar -->
+  <g>
+    <!-- Gradient bar -->
+    <rect x="370" y="480" width="284" height="64" rx="16" fill="url(#accentGradient)" opacity="0.8"/>
+    <!-- Highlight -->
+    <rect x="370" y="480" width="284" height="32" rx="16" fill="#ffffff" opacity="0.1"/>
+    <!-- Detail lines -->
+    <line x1="450" y1="480" x2="450" y2="544" stroke="#ffffff" stroke-width="3" opacity="0.2"/>
+    <line x1="512" y1="480" x2="512" y2="544" stroke="#ffffff" stroke-width="3" opacity="0.15"/>
+    <line x1="574" y1="480" x2="574" y2="544" stroke="#ffffff" stroke-width="3" opacity="0.2"/>
+  </g>
+
+  <!-- Right Dumbbell Plate -->
+  <g>
+    <!-- Outer ring -->
+    <circle cx="744" cy="512" r="90" fill="url(#dumbbellGradient)" opacity="0.9"/>
+    <!-- Inner highlight -->
+    <circle cx="744" cy="512" r="85" fill="url(#dumbbellGradient)" opacity="0.4"/>
+    <!-- Center detail -->
+    <circle cx="744" cy="512" r="70" fill="none" stroke="url(#accentGradient)" stroke-width="4" opacity="0.6"/>
+  </g>
+
+  <!-- Top accent glow -->
+  <ellipse cx="512" cy="250" rx="150" ry="100" fill="url(#dumbbellGradient)" opacity="0.15"/>
+
+  <!-- Bottom accent glow -->
+  <ellipse cx="512" cy="774" rx="150" ry="100" fill="url(#accentGradient)" opacity="0.12"/>
+
+  <!-- Corner accent lines -->
+  <line x1="150" y1="150" x2="250" y2="150" stroke="url(#dumbbellGradient)" stroke-width="3" opacity="0.3" stroke-linecap="round"/>
+  <line x1="150" y1="150" x2="150" y2="250" stroke="url(#dumbbellGradient)" stroke-width="3" opacity="0.3" stroke-linecap="round"/>
+  
+  <line x1="874" y1="150" x2="774" y2="150" stroke="url(#accentGradient)" stroke-width="3" opacity="0.3" stroke-linecap="round"/>
+  <line x1="874" y1="150" x2="874" y2="250" stroke="url(#accentGradient)" stroke-width="3" opacity="0.3" stroke-linecap="round"/>
+  
+  <line x1="150" y1="874" x2="250" y2="874" stroke="url(#accentGradient)" stroke-width="3" opacity="0.3" stroke-linecap="round"/>
+  <line x1="150" y1="874" x2="150" y2="774" stroke="url(#accentGradient)" stroke-width="3" opacity="0.3" stroke-linecap="round"/>
+  
+  <line x1="874" y1="874" x2="774" y2="874" stroke="url(#dumbbellGradient)" stroke-width="3" opacity="0.3" stroke-linecap="round"/>
+  <line x1="874" y1="874" x2="874" y2="774" stroke="url(#dumbbellGradient)" stroke-width="3" opacity="0.3" stroke-linecap="round"/>
+</svg>

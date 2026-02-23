@@ -8,7 +8,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "generate-icons": "npm install sharp && node generate-icons.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -45,6 +46,7 @@
     "react-native-svg": "^15.12.1",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.5.1",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.19"
   },
   "devDependencies": {
