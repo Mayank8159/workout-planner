@@ -4,9 +4,17 @@ services:
     dockerfilePath: ./Dockerfile
     plan: free
     envVars:
-      - key: MONGODB_URI
-        scope: build
-      - key: JWT_SECRET_KEY
-        scope: build
-      - key: ALGORITHM
-        scope: build
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: ENVIRONMENT
+        value: production
+      - key: SKIP_TFLITE
+        value: "true"
+      - key: PORT
+        value: "8000"
