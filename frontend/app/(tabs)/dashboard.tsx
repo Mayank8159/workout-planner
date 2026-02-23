@@ -63,9 +63,9 @@ export default function DashboardScreen() {
         colors={['#0f172a', '#1e293b']}
         className="flex-1"
       >
-        <ScrollView className="flex-1">
+        <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
           {/* Header */}
-          <View className="pt-4 pb-6 px-6">
+          <View className="pt-6 pb-6 px-6">
             <View className="flex-row justify-between items-center mb-2">
               <View>
                 <Text className="text-slate-400 text-sm">Welcome back,</Text>

@@ -173,7 +173,7 @@ export default function ScannerScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-900">
-      <View className="flex-1 bg-slate-900">
+      <View className="flex-1 bg-slate-900 pb-20">
         {!capturedImage ? (
           <>
             <CameraView
@@ -183,7 +183,7 @@ export default function ScannerScreen() {
               autofocus="on"
             >
               {/* Scanner Frame */}
-              <View className="flex-1 justify-center items-center">
+              <View className="flex-1 justify-center items-center pt-6">
                 <View className="w-80 h-80 border-4 border-emerald-500 rounded-3xl overflow-hidden">
                   {isScanning && <ScannerLaser />}
                 </View>

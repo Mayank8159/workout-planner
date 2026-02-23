@@ -96,8 +96,8 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-900">
-      <ScrollView className="flex-1 bg-dark-bg">
-        <View className="px-6 pt-2 pb-8">
+      <ScrollView className="flex-1 bg-dark-bg" contentContainerStyle={{ paddingBottom: 100 }}>
+        <View className="px-6 pt-6 pb-8">
           {/* Header with user avatar */}
           <View className="flex-row items-center mb-8">
             <View style={{

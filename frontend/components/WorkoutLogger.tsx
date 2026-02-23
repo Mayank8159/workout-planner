@@ -137,9 +137,9 @@ export default function WorkoutLoggerScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="flex-1"
         >
-          <ScrollView className="flex-1">
+          <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
             {/* Header */}
-            <View className="pt-4 pb-6 px-6">
+            <View className="pt-6 pb-6 px-6">
               <View className="flex-row justify-between items-center">
                 <View>
                   <Text className="text-white text-3xl font-bold">Workout Logger</Text>
