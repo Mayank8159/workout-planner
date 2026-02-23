@@ -1,0 +1,12 @@
+{ 
+  "recommendations": [
+    "expo.expo-tools",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    "React-Native.react-native-tools",
+    "ms-vscode.Theme-TwoDarkBlueBold",
+    "formulahendry.code-runner"
+  ]
+}
