@@ -163,17 +163,22 @@ export default function WorkoutLoggerScreen() {
       
       // Save all exercises
       for (const exercise of exercises) {
-        const completedSets = exercise.sets.filter(set => set.reps.trim() || set.weight.trim() || set.duration.trim());
+        // Count how many sets have actual data
+        let setCount = 0;
         
-        // Save each exercise with its data
-        for (const set of completedSets) {
-          await dataAPI.addWorkout({
-            exercise: exercise.name,
-            reps: parseInt(set.reps) || null,
-            weight: parseInt(set.weight) || null,
-            duration: parseInt(set.duration) || null,
-            date: today,
-          });
+        for (const set of exercise.sets) {
+          const hasData = set.reps.trim() || set.weight.trim() || set.duration.trim();
+          if (hasData) {
+            setCount++;
+            // Send each set as a separate workout entry
+            await dataAPI.addWorkout({
+              exercise: exercise.name,
+              sets: setCount,
+              reps: parseInt(set.reps) || 0,
+              weight: parseFloat(set.weight) || 0,
+              duration: parseInt(set.duration) || 0,
+            });
+          }
         }
       }
 
@@ -186,6 +191,7 @@ export default function WorkoutLoggerScreen() {
       }, 2000);
     } catch (err: any) {
       console.error('Error saving workout:', err);
+      console.error('Error details:', err?.response?.data);
       setError(
         err?.response?.data?.detail || 
         err?.message || 
