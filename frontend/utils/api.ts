@@ -65,7 +65,7 @@ export const dataAPI = {
   },
 
   addWorkout: async (workoutData: any) => {
-    const response = await apiClient.post('/workout', workoutData);
+    const response = await apiClient.post('/workout/', workoutData);
     return response.data;
   },
 
