@@ -83,13 +83,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Add CORS middleware
+# Add CORS middleware with explicit configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
+    allow_origins=["*"],  # Allow all origins
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,  # Cache preflight requests for 1 hour
 )
 
 # Include routes
@@ -110,6 +112,12 @@ async def root():
         "docs": "/docs",
         "health": "/health"
     }
+
+
+@app.options("/{full_path:path}")
+async def options_handler():
+    """Handle preflight OPTIONS requests"""
+    return {"message": "OK"}
 
 
 if __name__ == "__main__":
