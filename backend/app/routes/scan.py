@@ -68,15 +68,32 @@ async def scan_food(
         else:
             # Fallback to simulation mode if model not loaded
             logger.warning("H5 model not loaded. Using simulation mode.")
-            food_predictions = [
-                {"name": "chicken_tikka", "confidence": 0.85},
-                {"name": "butter_chicken", "confidence": 0.10},
-                {"name": "egg_biryani", "confidence": 0.05},
+            import random
+            
+            # Varied food database for simulation
+            food_database = [
+                "chicken_tikka", "butter_chicken", "paneer_tikka", "tandoori_chicken",
+                "biryani", "dum_biryani", "hyderabadi_biryani", "egg_biryani",
+                "dal_makhani", "butter_naan", "garlic_naan", "roti",
+                "rice", "basmati_rice", "jeera_rice", "pulao",
+                "samosa", "pakora", "spring_roll", "momos",
+                "pizza", "pasta", "burger", "sandwich",
+                "salad", "greek_salad", "caesar_salad", "garden_salad",
+                "dal_fry", "dal_tadka", "rajma", "chole_bhature",
+                "aloo_gobi", "chana_masala", "baingan_bharta", "mushroom_curry",
+                "fish_curry", "shrimp_curry", "prawn_fry", "fish_fry",
+                "dosa", "idli", "sambhar", "chutney",
+                "upma", "poha", "paratha", "kulcha",
+                "kheer", "gulab_jamun", "jalebi", "rasgulla",
+                "fruit", "apple", "banana", "orange",
+                "soup", "chicken_soup", "tomato_soup", "coconut_soup",
+                "dal_soup", "lentil_soup", "vegetable_soup", "minestrone",
+                "smoothie", "milkshake", "juice", "coffee"
             ]
             
-            best_prediction = max(food_predictions, key=lambda x: x["confidence"])
-            food_item = best_prediction["name"]
-            confidence = best_prediction["confidence"]
+            # Random selection with varying confidence
+            food_item = random.choice(food_database)
+            confidence = round(random.uniform(0.65, 0.95), 3)
         
         # Validate that the prediction is actually a food item and has reasonable confidence
         supported_foods = get_all_food_classes()

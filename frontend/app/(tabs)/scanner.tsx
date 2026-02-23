@@ -103,14 +103,13 @@ export default function ScannerScreen() {
       const formData = new FormData();
       const response = await fetch(imageUri);
       const blob = await response.blob();
-      formData.append('image', blob as any, 'photo.jpg');
+      formData.append('file', blob as any, 'photo.jpg');
 
       const backendResponse = await axios.post(
         `${API_BASE_URL}/scan/`,
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`,
           },
           timeout: 30000,
