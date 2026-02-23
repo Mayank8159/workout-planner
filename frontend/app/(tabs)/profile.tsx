@@ -1,31 +1,42 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useUser } from '@/context/UserContext';
+import LogoutConfirmModal from '@/components/LogoutConfirmModal';
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const { user, logout } = useUser();
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    console.log('🔴 LOGOUT BUTTON PRESSED - handleLogout called!');
+  const handleLogoutPress = () => {
+    console.log('🔴 LOGOUT BUTTON PRESSED - Opening confirmation modal');
+    setLogoutModalVisible(true);
+  };
+
+  const handleConfirmLogout = () => {
+    console.log('🚪 User confirmed logout, executing logout()...');
+    setIsLoggingOut(true);
     
-    // Use window.confirm on web, Alert on native
-    const confirmed = window.confirm ? window.confirm('Are you sure you want to logout?') : true;
-    
-    if (confirmed) {
-      console.log('🚪 User confirmed logout, executing logout()...');
-      logout()
-        .then(() => {
-          console.log('✓ Logout complete - root layout will redirect to login');
-        })
-        .catch((error) => {
-          console.error('❌ Logout error:', error);
-          if (window.alert) window.alert('Failed to logout. Please try again.');
-        });
-    } else {
-      console.log('⏸️ User cancelled logout');
-    }
+    logout()
+      .then(() => {
+        console.log('✓ Logout complete - root layout will redirect to login');
+        setLogoutModalVisible(false);
+        setIsLoggingOut(false);
+      })
+      .catch((error) => {
+        console.error('❌ Logout error:', error);
+        setIsLoggingOut(false);
+        setLogoutModalVisible(false);
+      });
+  };
+
+  const handleCancelLogout = () => {
+    console.log('⏸️ User cancelled logout');
+    setLogoutModalVisible(false);
   };
 
   return (
@@ -141,6 +152,7 @@ export default function ProfileScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            onPress={() => router.push('/help-support')}
             style={{
               backgroundColor: 'rgba(15, 23, 42, 0.8)',
               borderRadius: 12,
@@ -163,7 +175,7 @@ export default function ProfileScreen() {
 
         {/* Logout Button */}
         <TouchableOpacity
-          onPress={handleLogout}
+          onPress={handleLogoutPress}
           style={{
             backgroundColor: 'rgba(239, 68, 68, 0.1)',
             borderWidth: 1.5,
@@ -184,6 +196,14 @@ export default function ProfileScreen() {
 
         <View style={{ height: 20 }} />
       </ScrollView>
+
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        visible={logoutModalVisible}
+        onConfirm={handleConfirmLogout}
+        onCancel={handleCancelLogout}
+        isLoading={isLoggingOut}
+      />
     </SafeAreaView>
   );
 }
