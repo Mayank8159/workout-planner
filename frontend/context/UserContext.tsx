@@ -38,8 +38,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        console.log('🔍 Checking for stored token...');
         const storedToken = await secureStorage.getToken();
+        
         if (storedToken) {
+          console.log('✓ Token found, validating...');
           // Fetch user data with stored token
           const response = await axios.get(`${API_BASE_URL}/users/me`, {
             headers: {
@@ -48,6 +51,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           });
           
           const userData = response.data;
+          console.log('✓ User authenticated:', userData.username);
           setUser({
             id: userData.id || userData._id,
             username: userData.username,
@@ -58,10 +62,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           });
           setToken(storedToken);
           setIsAuthenticated(true);
+        } else {
+          console.log('ℹ No stored token found');
         }
-      } catch (error) {
-        console.log('No valid token found or token expired, user needs to login');
-        await secureStorage.removeToken();
+      } catch (error: any) {
+        console.log('❌ Token validation failed:', error?.response?.status || error.message);
+        // Only clear token if it's actually invalid (401) not just network errors
+        if (error?.response?.status === 401) {
+          console.log('🗑️ Clearing invalid token');
+          await secureStorage.removeToken();
+        }
       } finally {
         setIsLoading(false);
       }
@@ -72,6 +82,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (email: string, password: string) => {
     try {
+      console.log('🔐 Logging in...');
       // Call login endpoint to get token and user data
       const loginResponse = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
@@ -81,6 +92,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       const accessToken = loginResponse.data.access_token;
       const userData = loginResponse.data.user;
 
+      console.log('✓ Login successful, storing token...');
       // Store token securely (platform-aware)
       await secureStorage.setToken(accessToken);
 
@@ -95,14 +107,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       });
       setToken(accessToken);
       setIsAuthenticated(true);
+      console.log('✓ User logged in successfully');
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('❌ Login failed:', error);
       throw error;
     }
   };
 
   const register = async (username: string, email: string, password: string, dailyCalorieGoal: number = 2000) => {
     try {
+      console.log('📝 Registering new user...');
       // Call register endpoint - it returns token and user data
       const registerResponse = await axios.post(`${API_BASE_URL}/auth/register`, {
         username,
@@ -114,6 +128,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       const accessToken = registerResponse.data.access_token;
       const userData = registerResponse.data.user;
 
+      console.log('✓ Registration successful, storing token...');
       // Store token securely (platform-aware)
       await secureStorage.setToken(accessToken);
 
@@ -128,8 +143,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       });
       setToken(accessToken);
       setIsAuthenticated(true);
+      console.log('✓ User registered and logged in successfully');
     } catch (error) {
-      console.error('Registration failed:', error);
+      console.error('❌ Registration failed:', error);
       throw error;
     }
   };

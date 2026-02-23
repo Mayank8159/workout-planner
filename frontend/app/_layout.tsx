@@ -23,15 +23,16 @@ function RootLayoutContent() {
     if (isLoading) return;
 
     const inAuthGroup = segments[0] === '(tabs)';
+    const inAuthScreen = segments[0] === 'login' || segments[0] === 'signup';
 
     if (!isAuthenticated && inAuthGroup) {
-      // Redirect to login if not authenticated
+      // Redirect to login if not authenticated and trying to access protected routes
       router.replace('/login');
-    } else if (isAuthenticated && !inAuthGroup) {
-      // Redirect to main app if authenticated
+    } else if (isAuthenticated && inAuthScreen) {
+      // Redirect to main app if authenticated and on login/signup screen
       router.replace('/(tabs)/dashboard');
     }
-  }, [isAuthenticated, isLoading, segments]);
+  }, [isAuthenticated, isLoading]);
 
   // Show splash screen while initializing
   if (isLoading) {
