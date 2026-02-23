@@ -5,6 +5,9 @@ from app.models.database import connect_to_mongo, close_mongo_connection
 from app.routes import auth, scan, workout, history, health
 from app.core.config import settings
 from typing import Optional, Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # Global state for TFLite model
@@ -21,50 +24,55 @@ app_state = AppState()
 async def lifespan(app: FastAPI):
     """
     Lifespan event handler for startup and shutdown
-    Loads TFLite model at startup and cleans up at shutdown
+    Loads H5 model at startup and cleans up at shutdown
     """
     # Startup
-    print("🚀 Starting up application...")
+    logger.info("🚀 Starting up application...")
     
     try:
         # Connect to MongoDB
         await connect_to_mongo()
         
-        # Load TFLite model (optional, can be skipped in development)
+        # Load H5 Keras model for food detection
         if not settings.SKIP_TFLITE:
             try:
-                import tensorflow as tf
-                model_path = "models/food_model.tflite"  # Path to your TFLite model
-                app_state.model = tf.lite.Interpreter(model_path=model_path)
-                app_state.model.allocate_tensors()
-                app_state.input_details = app_state.model.get_input_details()
-                app_state.output_details = app_state.model.get_output_details()
-                print("✓ TFLite model loaded successfully")
-            except FileNotFoundError:
-                print("⚠ TFLite model not found. Running in simulation mode.")
-                app_state.model = None
+                from app.utils.model_loader import food_model
+                
+                # Try to load H5 model
+                model_path = "models/food_model.h5"
+                class_names_path = "models/food_classes.txt"
+                
+                if food_model.load_model(model_path):
+                    if food_model.load_class_names(class_names_path):
+                        logger.info("✓ H5 Keras model loaded successfully")
+                        logger.info(f"  Input shape: {food_model.input_shape}")
+                        logger.info(f"  Total classes: {len(food_model.class_names) if food_model.class_names else 'Unknown'}")
+                    else:
+                        logger.warning("⚠ Model loaded but class names not found. Using fallback mapping.")
+                else:
+                    logger.warning("⚠ H5 model not found. Running in simulation mode with extended food database (1000+ foods).")
+            except ImportError:
+                logger.warning("⚠ Model loader import failed. Running in simulation mode.")
             except Exception as e:
-                print(f"⚠ Failed to load TFLite model: {e}. Running without model.")
-                app_state.model = None
+                logger.warning(f"⚠ Failed to load H5 model: {e}. Running in simulation mode.")
         else:
-            print("⚠ TFLite loading skipped (SKIP_TFLITE=true). Running in simulation mode.")
-            app_state.model = None
+            logger.info("ℹ H5 model loading skipped (SKIP_TFLITE=true). Using simulation mode with extended database.")
         
-        print("✓ Application startup complete")
+        logger.info("✓ Application startup complete")
     
     except Exception as e:
-        print(f"❌ Startup failed: {e}")
+        logger.error(f"❌ Startup failed: {e}")
         raise
     
     yield
     
     # Shutdown
-    print("🛑 Shutting down application...")
+    logger.info("🛑 Shutting down application...")
     try:
         await close_mongo_connection()
-        print("✓ Application shutdown complete")
+        logger.info("✓ Application shutdown complete")
     except Exception as e:
-        print(f"❌ Shutdown error: {e}")
+        logger.error(f"❌ Shutdown error: {e}")
 
 
 # Create FastAPI app with lifespan

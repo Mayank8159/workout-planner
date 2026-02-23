@@ -19,10 +19,18 @@ async def connect_to_mongo():
         await daily_logs.create_index([("user_id", 1), ("date", 1)])
         await daily_logs.create_index([("user_id", 1)])
         
+        # Create TTL index - auto-delete records after 7 days
+        # This prevents database from getting full
+        await daily_logs.create_index(
+            [("createdAt", 1)],
+            expireAfterSeconds=604800  # 7 days in seconds
+        )
+        
         users = db["users"]
         await users.create_index([("email", 1)], unique=True)
         
         print("✓ Connected to MongoDB")
+        print("✓ TTL index created - records will auto-delete after 7 days")
     except Exception as e:
         print(f"⚠ MongoDB connection failed: {e}. Running in simulation mode.")
         client = None

@@ -78,7 +78,14 @@ export const dataAPI = {
 export const nutritionAPI = {
   getDailyNutrition: async (date: string) => {
     const response = await apiClient.get(`/data/${date}`);
-    return response.data?.nutrition || {};
+    return response.data?.nutrition || {
+      total_calories: 0,
+      total_protein: 0,
+      total_carbs: 0,
+      total_fat: 0,
+      total_fiber: 0,
+      items: [],
+    };
   },
 
   addFoodItem: async (foodData: any) => {
@@ -95,12 +102,20 @@ export const nutritionAPI = {
   logMealFromPrediction: async (mealData: {
     foodItem: string;
     calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
     confidence: number;
     date: string;
   }) => {
     const response = await apiClient.post('/scan', {
       food_item: mealData.foodItem,
       calories: mealData.calories,
+      protein: mealData.protein,
+      carbs: mealData.carbs,
+      fat: mealData.fat,
+      fiber: mealData.fiber,
       confidence: mealData.confidence,
     });
     return response.data;

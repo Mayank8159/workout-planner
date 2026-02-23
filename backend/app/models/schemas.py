@@ -89,7 +89,11 @@ class DailyHistoryResponseSchema(BaseModel):
 
 
 class FoodPredictionSchema(BaseModel):
-    """Food prediction response from AI"""
+    """Food prediction response from AI with full nutritional info"""
     food_item: str
     calories: float
+    protein: float  # grams
+    carbs: float    # grams
+    fat: float      # grams
+    fiber: float    # grams
     confidence: float
