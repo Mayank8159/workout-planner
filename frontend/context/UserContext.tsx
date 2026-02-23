@@ -46,38 +46,48 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         
         if (storedToken) {
           console.log('✓ Token found, validating...');
-          // Fetch user data with stored token
-          const response = await axios.get(`${API_BASE_URL}/users/me`, {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-          });
-          
-          const userData = response.data;
-          console.log('✓ User authenticated:', userData.username);
-          setUser({
-            id: userData.id || userData._id,
-            username: userData.username,
-            email: userData.email,
-            dailyCalorieGoal: userData.dailyCalorieGoal,
-            proteinGoal: userData.proteinGoal,
-            carbsGoal: userData.carbsGoal,
-            fiberGoal: userData.fiberGoal,
-            workoutStreak: userData.workoutStreak,
-            createdAt: userData.createdAt,
-          });
-          setToken(storedToken);
-          setIsAuthenticated(true);
+          try {
+            // Create an abort controller with 5 second timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
+            const response = await axios.get(`${API_BASE_URL}/users/me`, {
+              headers: {
+                Authorization: `Bearer ${storedToken}`,
+              },
+              signal: controller.signal,
+            });
+            
+            clearTimeout(timeoutId);
+            
+            const userData = response.data;
+            console.log('✓ User authenticated:', userData.username);
+            setUser({
+              id: userData.id || userData._id,
+              username: userData.username,
+              email: userData.email,
+              dailyCalorieGoal: userData.dailyCalorieGoal,
+              proteinGoal: userData.proteinGoal,
+              carbsGoal: userData.carbsGoal,
+              fiberGoal: userData.fiberGoal,
+              workoutStreak: userData.workoutStreak,
+              createdAt: userData.createdAt,
+            });
+            setToken(storedToken);
+            setIsAuthenticated(true);
+          } catch (validateError: any) {
+            console.log('❌ Token validation failed:', validateError?.response?.status || validateError.message);
+            // If it's a 401 or timeout, clear the token
+            if (validateError?.response?.status === 401 || validateError.name === 'AbortError') {
+              console.log('🗑️ Clearing invalid/expired token');
+              await secureStorage.removeToken();
+            }
+          }
         } else {
           console.log('ℹ No stored token found');
         }
       } catch (error: any) {
-        console.log('❌ Token validation failed:', error?.response?.status || error.message);
-        // Only clear token if it's actually invalid (401) not just network errors
-        if (error?.response?.status === 401) {
-          console.log('🗑️ Clearing invalid token');
-          await secureStorage.removeToken();
-        }
+        console.log('❌ Auth initialization error:', error?.message);
       } finally {
         setIsLoading(false);
       }
