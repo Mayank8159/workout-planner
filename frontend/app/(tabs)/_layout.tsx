@@ -6,44 +6,36 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#a855f7',
-        tabBarInactiveTintColor: '#6b7280',
+        tabBarActiveTintColor: '#10b981',
+        tabBarInactiveTintColor: '#64748b',
         tabBarStyle: {
-          backgroundColor: 'rgba(10, 14, 39, 0.9)',
-          borderTopColor: 'rgba(168, 85, 247, 0.2)',
+          backgroundColor: '#0f172a',
+          borderTopColor: '#334155',
           borderTopWidth: 1,
-          paddingBottom: 5,
-          shadowColor: '#a855f7',
-          shadowOpacity: 0.3,
-          shadowRadius: 10,
-          elevation: 10,
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 65,
+          shadowColor: '#10b981',
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
         },
         headerShown: false,
       }}>
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: 'Dashboard',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="dashboard" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="calendar"
-        options={{
-          title: 'Calendar',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="calendar-month" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="workout"
-        options={{
-          title: 'Workout',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="fitness-center" size={size} color={color} />
+          title: 'Home',
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialIcons 
+              name="dashboard" 
+              size={focused ? 28 : 24} 
+              color={color} 
+            />
           ),
         }}
       />
@@ -51,8 +43,25 @@ export default function TabLayout() {
         name="scanner"
         options={{
           title: 'Scanner',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="photo-camera" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialIcons 
+              name="photo-camera" 
+              size={focused ? 28 : 24} 
+              color={color} 
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="workout"
+        options={{
+          title: 'Workout',
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialIcons 
+              name="fitness-center" 
+              size={focused ? 28 : 24} 
+              color={color} 
+            />
           ),
         }}
       />
@@ -60,9 +69,32 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="person" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialIcons 
+              name="person" 
+              size={focused ? 28 : 24} 
+              color={color} 
+            />
           ),
+        }}
+      />
+      {/* Hide other tabs */}
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

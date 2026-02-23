@@ -1,22 +1,23 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
 import axios from 'axios';
 import { API_BASE_URL } from '@/utils/api';
+import { secureStorage } from '@/utils/secureStorage';
 
 export interface User {
   id: string;
   username: string;
   email: string;
-  dailyCalorieGoal: number;
-  workoutStreak: number;
-  createdAt: string;
+  dailyCalorieGoal?: number;
+  workoutStreak?: number;
+  createdAt?: string;
 }
 
 interface UserContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string) => Promise<void>;
+  token: string | null;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   refreshUser: () => Promise<void>;
@@ -28,6 +29,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,20 +37,30 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const token = await SecureStore.getItemAsync('userToken');
-        if (token) {
-          // Decode JWT and fetch user data
+        const storedToken = await secureStorage.getToken();
+        if (storedToken) {
+          // Fetch user data with stored token
           const response = await axios.get(`${API_BASE_URL}/users/me`, {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${storedToken}`,
             },
           });
-          setUser(response.data);
+          
+          const userData = response.data;
+          setUser({
+            id: userData.id || userData._id,
+            username: userData.username,
+            email: userData.email,
+            dailyCalorieGoal: userData.dailyCalorieGoal,
+            workoutStreak: userData.workoutStreak,
+            createdAt: userData.createdAt,
+          });
+          setToken(storedToken);
           setIsAuthenticated(true);
         }
       } catch (error) {
-        console.log('No valid token found, user needs to login');
-        await SecureStore.deleteItemAsync('userToken');
+        console.log('No valid token found or token expired, user needs to login');
+        await secureStorage.removeToken();
       } finally {
         setIsLoading(false);
       }
@@ -57,19 +69,30 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     initializeAuth();
   }, []);
 
-  const login = async (token: string) => {
+  const login = async (email: string, password: string) => {
     try {
-      // Store token securely
-      await SecureStore.setItemAsync('userToken', token);
-
-      // Fetch user data
-      const response = await axios.get(`${API_BASE_URL}/users/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      // Call login endpoint to get token and user data
+      const loginResponse = await axios.post(`${API_BASE_URL}/auth/login`, {
+        email,
+        password,
       });
 
-      setUser(response.data);
+      const accessToken = loginResponse.data.access_token;
+      const userData = loginResponse.data.user;
+
+      // Store token securely (platform-aware)
+      await secureStorage.setToken(accessToken);
+
+      // Set user data from login response (no need for separate /users/me call)
+      setUser({
+        id: userData.id || userData._id,
+        username: userData.username,
+        email: userData.email,
+        dailyCalorieGoal: userData.dailyCalorieGoal,
+        workoutStreak: userData.workoutStreak,
+        createdAt: userData.createdAt,
+      });
+      setToken(accessToken);
       setIsAuthenticated(true);
     } catch (error) {
       console.error('Login failed:', error);
@@ -79,8 +102,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = async () => {
     try {
-      await SecureStore.deleteItemAsync('userToken');
+      await secureStorage.removeToken();
       setUser(null);
+      setToken(null);
       setIsAuthenticated(false);
     } catch (error) {
       console.error('Logout failed:', error);
@@ -90,14 +114,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const refreshUser = async () => {
     try {
-      const token = await SecureStore.getItemAsync('userToken');
-      if (token) {
+      const storedToken = await secureStorage.getToken();
+      if (storedToken) {
         const response = await axios.get(`${API_BASE_URL}/users/me`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${storedToken}`,
           },
         });
-        setUser(response.data);
+        
+        const userData = response.data;
+        setUser({
+          id: userData.id || userData._id,
+          username: userData.username,
+          email: userData.email,
+          dailyCalorieGoal: userData.dailyCalorieGoal,
+          workoutStreak: userData.workoutStreak,
+          createdAt: userData.createdAt,
+        });
       }
     } catch (error) {
       console.error('Failed to refresh user:', error);
@@ -108,6 +141,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     <UserContext.Provider
       value={{
         user,
+        token,
         isAuthenticated,
         isLoading,
         login,

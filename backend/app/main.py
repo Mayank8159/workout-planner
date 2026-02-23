@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.models.database import connect_to_mongo, close_mongo_connection
-from app.routes import auth, scan, workout, history, health
+from app.routes import auth, scan, workout, history, health, users
 from app.core.config import settings
 from typing import Optional, Any
 import logging
@@ -95,6 +95,7 @@ app.add_middleware(
 # Include routes
 app.include_router(health.router)
 app.include_router(auth.router)
+app.include_router(users.router)
 app.include_router(scan.router)
 app.include_router(workout.router)
 app.include_router(history.router)
