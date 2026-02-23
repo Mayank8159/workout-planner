@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import tensorflow as tf
 from datetime import datetime
 from typing import Optional, Dict, Tuple
 import logging
@@ -15,7 +14,7 @@ class FoodModelLoader:
     """
     
     def __init__(self):
-        self.model: Optional[tf.keras.Model] = None
+        self.model: Optional[object] = None
         self.class_names: Optional[list] = None
         self.model_type: Optional[str] = None
         self.input_shape: Tuple[int, int, int] = (224, 224, 3)
@@ -31,6 +30,8 @@ class FoodModelLoader:
             True if successful, False otherwise
         """
         try:
+            import tensorflow as tf
+            
             if not os.path.exists(model_path):
                 logger.warning(f"Model not found at {model_path}")
                 return False
@@ -48,6 +49,9 @@ class FoodModelLoader:
             
             return True
             
+        except ImportError:
+            logger.warning("TensorFlow not available. Model loading disabled.")
+            return False
         except Exception as e:
             logger.error(f"Failed to load model: {e}")
             self.model = None
@@ -120,6 +124,9 @@ class FoodModelLoader:
                 "timestamp": datetime.utcnow().isoformat()
             }
             
+        except ImportError:
+            logger.error("TensorFlow not available for predictions")
+            return {"error": "TensorFlow not available"}
         except Exception as e:
             logger.error(f"Prediction failed: {e}")
             return {"error": str(e)}
@@ -134,23 +141,35 @@ class FoodModelLoader:
         Returns:
             Preprocessed image ready for model
         """
-        # Resize to model input shape
-        from tensorflow.image import resize
-        import tensorflow as tf
-        
-        resized = resize(image_array, (self.input_shape[0], self.input_shape[1]))
-        
-        # Convert to numpy for max() operation
-        if hasattr(resized, 'numpy'):
-            resized_np = resized.numpy()
-        else:
-            resized_np = np.array(resized)
-        
-        # Normalize to [0, 1]
-        if resized_np.max() > 1.0:
-            resized_np = resized_np / 255.0
-        
-        return resized_np
+        try:
+            from PIL import Image
+            
+            # Convert to PIL if needed
+            if isinstance(image_array, np.ndarray):
+                if image_array.dtype == np.float32 or image_array.dtype == np.float64:
+                    # Already float, just resize
+                    img = Image.fromarray((image_array * 255).astype(np.uint8) if image_array.max() <= 1 else image_array.astype(np.uint8))
+                else:
+                    img = Image.fromarray(image_array.astype(np.uint8))
+            else:
+                img = image_array
+            
+            # Resize
+            img_resized = img.resize((self.input_shape[0], self.input_shape[1]))
+            
+            # Convert to array
+            resized_np = np.array(img_resized, dtype=np.float32)
+            
+            # Normalize to [0, 1]
+            if resized_np.max() > 1.0:
+                resized_np = resized_np / 255.0
+            
+            return resized_np
+            
+        except Exception as e:
+            logger.error(f"Image preprocessing failed: {e}")
+            # Return original image as fallback
+            return image_array.astype(np.float32) / 255.0 if image_array.max() > 1 else image_array.astype(np.float32)
     
     def is_loaded(self) -> bool:
         """Check if model is currently loaded"""
