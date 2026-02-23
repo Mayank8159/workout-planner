@@ -146,8 +146,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const register,
-        refreshUser = async () => {
+  const refreshUser = async () => {
     try {
       const storedToken = await secureStorage.getToken();
       if (storedToken) {
@@ -180,6 +179,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         isAuthenticated,
         isLoading,
         login,
+        register,
         logout,
         setUser,
         refreshUser,
