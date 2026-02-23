@@ -3,8 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator,
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import axios from 'axios';
-import { API_BASE_URL } from '@/utils/api';
+import { useUser } from '@/context/UserContext';
 
 export default function SignUpScreen() {
   const [username, setUsername] = useState('');
@@ -16,6 +15,7 @@ export default function SignUpScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+  const { register } = useUser();
 
   const handleSignUp = async () => {
     // Validation
@@ -38,17 +38,11 @@ export default function SignUpScreen() {
     setError('');
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/register`, {
-        username,
-        email,
-        password,
-        dailyCalorieGoal: 2000, // Default calorie goal
-      });
-
-      console.log('Registration successful:', response.data);
+      // Register and auto-login using UserContext
+      await register(username, email, password, 2000);
       
-      // Registration successful, navigate to login
-      router.replace('/login');
+      // Registration and auto-login successful, navigate to main app
+      router.replace('/(tabs)/dashboard');
     } catch (err: any) {
       console.error('Registration error:', err);
       

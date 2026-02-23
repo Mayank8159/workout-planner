@@ -18,6 +18,7 @@ interface UserContextType {
   isLoading: boolean;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (username: string, email: string, password: string, dailyCalorieGoal?: number) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
   refreshUser: () => Promise<void>;
@@ -100,6 +101,39 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const register = async (username: string, email: string, password: string, dailyCalorieGoal: number = 2000) => {
+    try {
+      // Call register endpoint - it returns token and user data
+      const registerResponse = await axios.post(`${API_BASE_URL}/auth/register`, {
+        username,
+        email,
+        password,
+        dailyCalorieGoal,
+      });
+
+      const accessToken = registerResponse.data.access_token;
+      const userData = registerResponse.data.user;
+
+      // Store token securely (platform-aware)
+      await secureStorage.setToken(accessToken);
+
+      // Set user data from register response
+      setUser({
+        id: userData.id || userData._id,
+        username: userData.username,
+        email: userData.email,
+        dailyCalorieGoal: userData.dailyCalorieGoal,
+        workoutStreak: userData.workoutStreak,
+        createdAt: userData.createdAt,
+      });
+      setToken(accessToken);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Registration failed:', error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       await secureStorage.removeToken();
@@ -112,7 +146,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const refreshUser = async () => {
+  const register,
+        refreshUser = async () => {
     try {
       const storedToken = await secureStorage.getToken();
       if (storedToken) {
