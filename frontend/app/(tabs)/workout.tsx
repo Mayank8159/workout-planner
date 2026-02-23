@@ -88,11 +88,11 @@ export default function WorkoutScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-gray-900"
+      className="flex-1 bg-dark-bg"
     >
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="px-6 pt-8 pb-8">
-          <Text className="text-3xl font-bold text-white mb-8">
+          <Text className="text-3xl font-bold text-cyan-400 mb-8">
             Log Workout
           </Text>
 
@@ -100,74 +100,123 @@ export default function WorkoutScreen() {
           <View className="mb-8">
             {/* Exercise Name */}
             <View className="mb-6">
-              <Text className="text-white font-semibold mb-2">
+              <Text className="text-cyan-400 font-semibold mb-2">
                 Exercise Name
               </Text>
               <TextInput
                 placeholder="e.g., Bench Press"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor="#6b7280"
                 value={form.exercise}
                 onChangeText={(value) => handleInputChange("exercise", value)}
-                className="bg-gray-800 text-white rounded-lg px-4 py-3 border border-gray-700"
+                style={{
+                  backgroundColor: 'rgba(26, 31, 58, 0.5)',
+                  color: 'white',
+                  borderRadius: 12,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  borderWidth: 1,
+                  borderColor: 'rgba(168, 85, 247, 0.3)',
+                }}
               />
             </View>
 
             {/* Sets and Reps */}
             <View className="flex-row gap-4 mb-6">
               <View className="flex-1">
-                <Text className="text-white font-semibold mb-2">Sets</Text>
+                <Text className="text-cyan-400 font-semibold mb-2">Sets</Text>
                 <TextInput
                   placeholder="4"
-                  placeholderTextColor="#9ca3af"
+                  placeholderTextColor="#6b7280"
                   keyboardType="number-pad"
                   value={form.sets}
                   onChangeText={(value) => handleInputChange("sets", value)}
-                  className="bg-gray-800 text-white rounded-lg px-4 py-3 border border-gray-700"
+                  style={{
+                    backgroundColor: 'rgba(26, 31, 58, 0.5)',
+                    color: 'white',
+                    borderRadius: 12,
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    borderWidth: 1,
+                    borderColor: 'rgba(168, 85, 247, 0.3)',
+                  }}
                 />
               </View>
               <View className="flex-1">
-                <Text className="text-white font-semibold mb-2">Reps</Text>
+                <Text className="text-cyan-400 font-semibold mb-2">Reps</Text>
                 <TextInput
                   placeholder="8"
-                  placeholderTextColor="#9ca3af"
+                  placeholderTextColor="#6b7280"
                   keyboardType="number-pad"
                   value={form.reps}
                   onChangeText={(value) => handleInputChange("reps", value)}
-                  className="bg-gray-800 text-white rounded-lg px-4 py-3 border border-gray-700"
+                  style={{
+                    backgroundColor: 'rgba(26, 31, 58, 0.5)',
+                    color: 'white',
+                    borderRadius: 12,
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    borderWidth: 1,
+                    borderColor: 'rgba(168, 85, 247, 0.3)',
+                  }}
                 />
               </View>
             </View>
 
             {/* Weight */}
             <View className="mb-6">
-              <Text className="text-white font-semibold mb-2">Weight (lbs)</Text>
+              <Text className="text-cyan-400 font-semibold mb-2">Weight (lbs)</Text>
               <TextInput
                 placeholder="185"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor="#6b7280"
                 keyboardType="decimal-pad"
                 value={form.weight}
                 onChangeText={(value) => handleInputChange("weight", value)}
-                className="bg-gray-800 text-white rounded-lg px-4 py-3 border border-gray-700"
+                style={{
+                  backgroundColor: 'rgba(26, 31, 58, 0.5)',
+                  color: 'white',
+                  borderRadius: 12,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  borderWidth: 1,
+                  borderColor: 'rgba(168, 85, 247, 0.3)',
+                }}
               />
             </View>
 
             {/* Duration */}
             <View className="mb-6">
-              <Text className="text-white font-semibold mb-2">Duration (minutes)</Text>
+              <Text className="text-cyan-400 font-semibold mb-2">Duration (minutes)</Text>
               <TextInput
                 placeholder="45"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor="#6b7280"
                 keyboardType="number-pad"
                 value={form.duration}
                 onChangeText={(value) => handleInputChange("duration", value)}
-                className="bg-gray-800 text-white rounded-lg px-4 py-3 border border-gray-700"
+                style={{
+                  backgroundColor: 'rgba(26, 31, 58, 0.5)',
+                  color: 'white',
+                  borderRadius: 12,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  borderWidth: 1,
+                  borderColor: 'rgba(168, 85, 247, 0.3)',
+                }}
               />
             </View>
 
             {/* Add Workout Button */}
             <TouchableOpacity
               onPress={handleAddWorkout}
-              className="bg-blue-600 rounded-lg py-4 items-center mt-4"
+              style={{
+                backgroundColor: 'rgba(168, 85, 247, 0.8)',
+                borderRadius: 12,
+                paddingVertical: 16,
+                marginTop: 16,
+                alignItems: 'center',
+                shadowColor: '#a855f7',
+                shadowOpacity: 0.6,
+                shadowRadius: 15,
+              }}
             >
               <View className="flex-row items-center gap-2">
                 <MaterialIcons name="add" size={24} color="white" />
@@ -179,27 +228,40 @@ export default function WorkoutScreen() {
           {/* Recently Added */}
           {submittedWorkouts.length > 0 && (
             <View className="mt-8">
-              <Text className="text-xl font-bold text-white mb-4">
+              <Text className="text-xl font-bold text-cyan-400 mb-4">
                 Recently Added
               </Text>
               {submittedWorkouts.map((workout) => (
-                <View key={workout.id} className="bg-gray-800 rounded-lg p-4 mb-3">
+                <View 
+                  key={workout.id} 
+                  style={{
+                    backgroundColor: 'rgba(26, 31, 58, 0.5)',
+                    borderRadius: 12,
+                    padding: 16,
+                    marginBottom: 12,
+                    borderWidth: 1,
+                    borderColor: 'rgba(14, 165, 233, 0.3)',
+                    shadowColor: '#0ea5e9',
+                    shadowOpacity: 0.4,
+                    shadowRadius: 10,
+                  }}
+                >
                   <View className="flex-row justify-between items-start mb-2">
                     <View>
                       <Text className="text-white font-bold text-lg">
                         {workout.exercise}
                       </Text>
-                      <Text className="text-gray-400 text-sm">
+                      <Text className="text-cyan-400 text-sm">
                         {workout.timestamp}
                       </Text>
                     </View>
                   </View>
                   <View className="flex-row justify-between">
-                    <Text className="text-gray-300">
+                    <Text className="text-cyan-300">
                       {workout.sets} × {workout.reps}
                     </Text>
-                    <Text className="text-gray-300">{workout.weight} lbs</Text>
-                    <Text className="text-gray-300">{workout.duration} min</Text>
+                    <Text className="text-cyan-300">{workout.weight} lbs</Text>
+                    <Text className="text-cyan-300">{workout.duration} min</Text>
                   </View>
                 </View>
               ))}

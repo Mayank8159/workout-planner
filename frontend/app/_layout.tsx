@@ -4,13 +4,21 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { UserProvider, useUser } from '@/context/UserContext';
+import SplashScreen from '@/components/SplashScreen';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-export default function RootLayout() {
+function RootLayoutContent() {
   const colorScheme = useColorScheme();
+  const { isLoading } = useUser();
+
+  // Show splash screen while initializing
+  if (isLoading) {
+    return <SplashScreen />;
+  }
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -20,5 +28,13 @@ export default function RootLayout() {
       </Stack>
       <StatusBar style="light" />
     </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <UserProvider>
+      <RootLayoutContent />
+    </UserProvider>
   );
 }
