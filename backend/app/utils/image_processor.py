@@ -1,4 +1,3 @@
-import cv2
 import numpy as np
 from io import BytesIO
 from PIL import Image
@@ -16,21 +15,18 @@ async def process_image(file_bytes: bytes) -> Tuple[np.ndarray, bool]:
         Tuple of (processed_image, success)
     """
     try:
-        # Convert bytes to OpenCV image
-        nparr = np.frombuffer(file_bytes, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        
-        if img is None:
-            return None, False
+        # Convert bytes to PIL image
+        img = Image.open(BytesIO(file_bytes))
+        img = img.convert('RGB')
         
         # Resize to 224x224 (standard for most food models)
-        img_resized = cv2.resize(img, (224, 224))
+        img_resized = img.resize((224, 224))
         
-        # Convert BGR to RGB
-        img_rgb = cv2.cvtColor(img_resized, cv2.COLOR_BGR2RGB)
+        # Convert to numpy array
+        img_array = np.array(img_resized)
         
         # Normalize to [0, 1]
-        img_normalized = img_rgb.astype(np.float32) / 255.0
+        img_normalized = img_array.astype(np.float32) / 255.0
         
         # Add batch dimension: (1, 224, 224, 3)
         img_batch = np.expand_dims(img_normalized, axis=0)

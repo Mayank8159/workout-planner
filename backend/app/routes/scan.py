@@ -2,7 +2,8 @@ from fastapi import APIRouter, File, UploadFile, Depends, HTTPException, status
 from datetime import datetime
 from uuid import uuid4
 import numpy as np
-import cv2
+from PIL import Image
+from io import BytesIO
 import logging
 from app.models.database import get_database
 from app.models.schemas import FoodPredictionSchema
@@ -35,18 +36,13 @@ async def scan_food(
         # Read uploaded file
         contents = await file.read()
         
-        # Decode image
-        nparr = np.frombuffer(contents, np.uint8)
-        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        
-        if image is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Failed to decode image"
-            )
+        # Decode image using PIL
+        image = Image.open(BytesIO(contents))
+        image = image.convert('RGB')
+        image_array = np.array(image)
         
         # Process image for model
-        processed_image = food_model.preprocess_image(image.astype(np.float32))
+        processed_image = food_model.preprocess_image(image_array.astype(np.float32))
         
         # Make prediction
         if food_model.is_loaded():
