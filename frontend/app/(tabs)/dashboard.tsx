@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Dimensions, SafeAreaView, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Progress from 'react-native-progress';
 import { useUser } from '@/context/UserContext';
@@ -167,222 +168,436 @@ export default function DashboardScreen() {
     <SafeAreaView className="flex-1 bg-slate-900">
       <LinearGradient colors={['#0f172a', '#1e293b']} className="flex-1">
         <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 140 }}>
-          {/* Header */}
-          <View className="pt-6 pb-6 px-6">
-            <View className="flex-row justify-between items-center mb-2">
-              <View>
-                <Text className="text-slate-400 text-sm">Welcome back,</Text>
-                <Text className="text-white text-3xl font-bold">{user?.username || 'User'}</Text>
+          {/* Professional Header with Gradient Background */}
+          <LinearGradient
+            colors={['rgba(59, 130, 246, 0.15)', 'rgba(15, 23, 42, 0)']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24 }}>
+            <View className="flex-row justify-between items-start">
+              <View className="flex-1">
+                <Text className="text-slate-400 text-sm font-semibold">Welcome back</Text>
+                <Text className="text-white text-4xl font-900 mt-1">{user?.username || 'User'}</Text>
+                <Text className="text-slate-400 text-xs mt-2">Let's crush your goals today</Text>
               </View>
-              <TouchableOpacity className="bg-slate-800 rounded-full p-3 border border-slate-700">
-                <MaterialIcons name="notifications-none" size={24} color="#E5E7EB" />
+              <TouchableOpacity
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  backgroundColor: 'rgba(96, 165, 250, 0.15)',
+                  borderWidth: 1,
+                  borderColor: 'rgba(96, 165, 250, 0.3)',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <MaterialIcons name="notifications-none" size={22} color="#60a5fa" />
               </TouchableOpacity>
             </View>
-          </View>
+          </LinearGradient>
 
           {/* Weekly Calendar Strip */}
-          <View className="px-6 mb-6">
-            <Text className="text-white text-lg font-semibold mb-4">This Week</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-              {weekDays.map((day, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => setSelectedDate(day.date)}
-                  className={`mr-3 items-center justify-center rounded-2xl px-4 py-3 ${
-                    day.isToday
-                      ? 'bg-gray-400'
-                      : selectedDate.toDateString() === day.date.toDateString()
-                      ? 'bg-slate-700'
-                      : 'bg-slate-800 border border-slate-700'
-                  }`}
-                  style={{ minWidth: 60 }}
-                >
-                  <Text className={`text-xs mb-1 ${day.isToday ? 'text-slate-900 font-bold' : 'text-slate-400'}`}>
-                    {day.dayName}
-                  </Text>
-                  <Text className={`text-xl font-bold ${day.isToday ? 'text-slate-900' : 'text-white'}`}>
-                    {day.dayNumber}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+          <View style={{ paddingHorizontal: 20, marginBottom: 28, marginTop: 12 }}>
+            <View className="flex-row items-center mb-4">
+              <MaterialIcons name="calendar-today" size={18} color="#60a5fa" style={{ marginRight: 8 }} />
+              <Text className="text-white text-lg font-bold">This Week</Text>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row" style={{ marginHorizontal: -20 }}>
+              <View style={{ paddingHorizontal: 20, flexDirection: 'row', gap: 8 }}>
+                {weekDays.map((day, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => setSelectedDate(day.date)}
+                    style={{
+                      minWidth: 70,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 12,
+                      paddingHorizontal: 12,
+                      paddingVertical: 12,
+                      borderWidth: 1.5,
+                    }}
+                    className={
+                      day.isToday
+                        ? ''
+                        : selectedDate.toDateString() === day.date.toDateString()
+                        ? 'bg-slate-700 border-slate-600'
+                        : 'bg-slate-800/50 border-slate-700'
+                    }>
+                    {day.isToday ? (
+                      <LinearGradient
+                        colors={['rgba(96, 165, 250, 0.3)', 'rgba(59, 130, 246, 0.15)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={{
+                          position: 'absolute',
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: 12,
+                          borderWidth: 1.5,
+                          borderColor: 'rgba(96, 165, 250, 0.4)',
+                        }}
+                      />
+                    ) : null}
+                    <Text
+                      className={`text-xs mb-1 font-bold ${
+                        day.isToday ? 'text-blue-300' : 'text-slate-400'
+                      }`}>
+                      {day.dayName}
+                    </Text>
+                    <Text className={`text-lg font-bold ${day.isToday ? 'text-blue-300' : 'text-white'}`}>
+                      {day.dayNumber}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </ScrollView>
           </View>
 
           {/* Loading State */}
           {isLoading ? (
-            <View className="px-6 mb-6">
-                <ActivityIndicator size="large" color="#E5E7EB" />
-              <Text className="text-slate-400 text-center mt-2">Loading your data...</Text>
+            <View style={{ paddingHorizontal: 20, marginBottom: 24, alignItems: 'center' }}>
+              <ActivityIndicator size="large" color="#60a5fa" />
+              <Text className="text-slate-400 text-center mt-3">Loading your data...</Text>
             </View>
           ) : error ? (
-            <View className="px-6 mb-6">
-              <Text className="text-red-400 text-center">{error}</Text>
-            </View>
+            <LinearGradient
+              colors={['rgba(239, 68, 68, 0.15)', 'rgba(239, 68, 68, 0.05)']}
+              style={{
+                marginHorizontal: 20,
+                marginBottom: 24,
+                borderRadius: 12,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                borderWidth: 1,
+                borderColor: 'rgba(239, 68, 68, 0.3)',
+              }}>
+              <Text className="text-red-300 text-center text-sm">{error}</Text>
+            </LinearGradient>
           ) : (
             <>
               {/* Daily Progress Section */}
-              <View className="px-6 mb-6">
-                <Text className="text-white text-lg font-semibold mb-4">Daily Progress</Text>
-                <View className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
-                  <View className="items-center mb-6">
+              <View style={{ paddingHorizontal: 20, marginBottom: 28 }}>
+                <View className="flex-row items-center mb-4">
+                  <MaterialIcons name="trending-up" size={20} color="#60a5fa" style={{ marginRight: 8 }} />
+                  <Text className="text-white text-lg font-bold">Daily Progress</Text>
+                </View>
+                <LinearGradient
+                  colors={['rgba(51, 65, 85, 0.4)', 'rgba(51, 65, 85, 0.15)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 16,
+                    padding: 24,
+                    borderWidth: 1,
+                    borderColor: 'rgba(148, 163, 184, 0.2)',
+                  }}>
+                  <View className="items-center mb-8">
                     <Progress.Circle
-                      size={180}
+                      size={160}
                       progress={Math.min(progress, 1)}
-                      thickness={12}
-                      color="#E5E7EB"
-                      unfilledColor="#334155"
+                      thickness={10}
+                      color="#60a5fa"
+                      unfilledColor="rgba(148, 163, 184, 0.2)"
                       borderWidth={0}
                       showsText={false}
                       strokeCap="round"
                     />
-                    <View className="absolute" style={{ top: 60 }}>
-                      <Text className="text-white text-4xl font-bold text-center">
+                    <View className="absolute" style={{ top: 45 }}>
+                      <Text className="text-white text-4xl font-900 text-center">
                         {nutritionData.total_calories}
                       </Text>
-                      <Text className="text-slate-400 text-sm text-center">of {dailyCalorieGoal}</Text>
-                      <Text className="text-gray-300 text-xs text-center mt-1">calories</Text>
+                      <Text className="text-slate-400 text-xs text-center mt-1">
+                        <Text className="font-bold">{dailyCalorieGoal}</Text> cal goal
+                      </Text>
                     </View>
                   </View>
 
-                  {/* Macros Summary */}
-                  <View className="flex-row justify-between">
-                    <View className="items-center flex-1">
-                      <View className="bg-blue-500/20 rounded-full px-3 py-1 mb-2">
-                        <Text className="text-blue-400 font-bold">{Math.round(nutritionData.total_carbs)}g</Text>
-                      </View>
-                      <Text className="text-slate-400 text-xs">Carbs</Text>
-                    </View>
-                    <View className="items-center flex-1">
-                      <View className="bg-gray-500/20 rounded-full px-3 py-1 mb-2">
-                        <Text className="text-gray-300 font-bold">{Math.round(nutritionData.total_protein)}g</Text>
-                      </View>
-                      <Text className="text-slate-400 text-xs">Protein</Text>
-                    </View>
-                    <View className="items-center flex-1">
-                      <View className="bg-gray-500/20 rounded-full px-3 py-1 mb-2">
-                        <Text className="text-gray-300 font-bold">{Math.round(nutritionData.total_fat)}g</Text>
-                      </View>
-                      <Text className="text-slate-400 text-xs">Fat</Text>
-                    </View>
+                  {/* Macros Grid */}
+                  <View style={{ flexDirection: 'row', gap: 10, marginBottom: 16 }}>
+                    {/* Carbs */}
+                    <LinearGradient
+                      colors={['rgba(96, 165, 250, 0.15)', 'rgba(59, 130, 246, 0.08)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        flex: 1,
+                        borderRadius: 12,
+                        padding: 12,
+                        borderWidth: 1,
+                        borderColor: 'rgba(96, 165, 250, 0.2)',
+                        alignItems: 'center',
+                      }}>
+                      <MaterialIcons name="grain" size={18} color="#60a5fa" />
+                      <Text className="text-blue-300 font-bold text-lg mt-1">{Math.round(nutritionData.total_carbs)}g</Text>
+                      <Text className="text-slate-400 text-xs mt-1">Carbs</Text>
+                    </LinearGradient>
+
+                    {/* Protein */}
+                    <LinearGradient
+                      colors={['rgba(168, 85, 247, 0.15)', 'rgba(139, 92, 246, 0.08)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        flex: 1,
+                        borderRadius: 12,
+                        padding: 12,
+                        borderWidth: 1,
+                        borderColor: 'rgba(168, 85, 247, 0.2)',
+                        alignItems: 'center',
+                      }}>
+                      <MaterialIcons name="local-fire-department" size={18} color="#c084fc" />
+                      <Text className="text-purple-300 font-bold text-lg mt-1">{Math.round(nutritionData.total_protein)}g</Text>
+                      <Text className="text-slate-400 text-xs mt-1">Protein</Text>
+                    </LinearGradient>
+
+                    {/* Fat */}
+                    <LinearGradient
+                      colors={['rgba(249, 115, 22, 0.15)', 'rgba(217, 119, 6, 0.08)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        flex: 1,
+                        borderRadius: 12,
+                        padding: 12,
+                        borderWidth: 1,
+                        borderColor: 'rgba(249, 115, 22, 0.2)',
+                        alignItems: 'center',
+                      }}>
+                      <MaterialIcons name="opacity" size={18} color="#f97316" />
+                      <Text className="text-orange-300 font-bold text-lg mt-1">{Math.round(nutritionData.total_fat)}g</Text>
+                      <Text className="text-slate-400 text-xs mt-1">Fat</Text>
+                    </LinearGradient>
                   </View>
 
                   {/* Remaining Calories */}
-                  <View className="mt-4 pt-4 border-t border-slate-700">
-                    <Text className="text-slate-400 text-sm text-center">
-                      <Text className="text-gray-300 font-bold">{Math.round(remaining)} calories</Text> remaining today
-                    </Text>
+                  <View
+                    style={{
+                      backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                      borderRadius: 10,
+                      paddingHorizontal: 12,
+                      paddingVertical: 10,
+                      borderWidth: 1,
+                      borderColor: 'rgba(34, 197, 94, 0.2)',
+                    }}>
+                    <View className="flex-row items-center justify-center">
+                      <MaterialIcons name="check-circle" size={16} color="#22c55e" />
+                      <Text className="text-green-300 text-sm font-bold ml-2">
+                        {Math.round(remaining)} calories remaining
+                      </Text>
+                    </View>
                   </View>
-                </View>
+                </LinearGradient>
               </View>
 
               {/* Quick Actions */}
-              <View className="px-6 mb-6">
-                <View className="flex-row space-x-3">
-                  <TouchableOpacity 
+              <View style={{ paddingHorizontal: 20, marginBottom: 28 }}>
+                <View className="flex-row gap-3">
+                  <TouchableOpacity
                     onPress={() => router.push('/(tabs)/scanner')}
                     className="flex-1"
-                  >
-                    <View
-                      className="rounded-2xl p-4 items-center bg-gray-300 border-2 border-gray-400"
-                      style={{ shadowColor: '#000000', shadowOpacity: 0.4, shadowRadius: 8, elevation: 8 }}
-                    >
-                      <MaterialIcons name="photo-camera" size={28} color="#0f172a" />
-                      <Text className="text-slate-900 font-bold mt-2">Scan Food</Text>
-                    </View>
+                    activeOpacity={0.8}>
+                    <LinearGradient
+                      colors={['rgba(96, 165, 250, 0.3)', 'rgba(59, 130, 246, 0.15)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        borderRadius: 14,
+                        paddingVertical: 14,
+                        alignItems: 'center',
+                        borderWidth: 1.5,
+                        borderColor: 'rgba(96, 165, 250, 0.4)',
+                      }}>
+                      <MaterialIcons name="photo-camera" size={24} color="#60a5fa" />
+                      <Text className="text-blue-300 font-bold mt-2">Scan Food</Text>
+                    </LinearGradient>
                   </TouchableOpacity>
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     onPress={() => router.push('/(tabs)/workout')}
                     className="flex-1"
-                  >
-                    <View className="bg-slate-800 border border-slate-700 rounded-2xl p-4 items-center">
-                      <MaterialIcons name="fitness-center" size={28} color="#E5E7EB" />
-                      <Text className="text-white font-bold mt-2">Log Workout</Text>
-                    </View>
+                    activeOpacity={0.8}>
+                    <LinearGradient
+                      colors={['rgba(168, 85, 247, 0.3)', 'rgba(139, 92, 246, 0.15)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        borderRadius: 14,
+                        paddingVertical: 14,
+                        alignItems: 'center',
+                        borderWidth: 1.5,
+                        borderColor: 'rgba(168, 85, 247, 0.4)',
+                      }}>
+                      <MaterialIcons name="fitness-center" size={24} color="#c084fc" />
+                      <Text className="text-purple-300 font-bold mt-2">Log Workout</Text>
+                    </LinearGradient>
                   </TouchableOpacity>
                 </View>
               </View>
 
               {/* Today's Workouts */}
-              <View className="px-6 mb-6">
+              <View style={{ paddingHorizontal: 20, marginBottom: 28 }}>
                 <View className="flex-row justify-between items-center mb-4">
-                  <Text className="text-white text-lg font-semibold">Today's Workouts</Text>
+                  <View className="flex-row items-center">
+                    <MaterialIcons name="fitness-center" size={20} color="#c084fc" style={{ marginRight: 8 }} />
+                    <Text className="text-white text-lg font-bold">Today's Workouts</Text>
+                  </View>
                   {upcomingWorkouts.length > 0 && (
                     <TouchableOpacity onPress={() => router.push('/(tabs)/workout')}>
-                      <Text className="text-gray-300 text-sm">View All</Text>
+                      <Text className="text-purple-300 text-xs font-bold">View All</Text>
                     </TouchableOpacity>
                   )}
                 </View>
 
                 {upcomingWorkouts.length > 0 ? (
                   upcomingWorkouts.slice(0, 2).map((workout, index) => (
-                    <View key={index} className="bg-slate-800 border border-slate-700 rounded-2xl p-4 mb-3">
-                      <View className="flex-row justify-between items-center mb-2">
-                        <View className="flex-row items-center">
-                          <View className="bg-gray-500/20 rounded-full p-2 mr-3">
-                            <MaterialIcons name="fitness-center" size={20} color="#E5E7EB" />
+                    <LinearGradient
+                      key={index}
+                      colors={['rgba(168, 85, 247, 0.1)', 'rgba(139, 92, 246, 0.05)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        borderRadius: 12,
+                        padding: 14,
+                        marginBottom: 10,
+                        borderWidth: 1,
+                        borderColor: 'rgba(168, 85, 247, 0.2)',
+                      }}>
+                      <View className="flex-row justify-between items-start">
+                        <View className="flex-row items-center flex-1">
+                          <View
+                            style={{
+                              width: 40,
+                              height: 40,
+                              borderRadius: 10,
+                              backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              marginRight: 12,
+                            }}>
+                            <MaterialIcons name="fitness-center" size={18} color="#c084fc" />
                           </View>
-                          <View>
+                          <View className="flex-1">
                             <Text className="text-white font-bold">{workout.exercise}</Text>
-                            <Text className="text-slate-400 text-xs">
+                            <Text className="text-slate-400 text-xs mt-1">
                               {workout.sets && workout.reps
                                 ? `${workout.sets} sets × ${workout.reps} reps`
                                 : workout.duration
                                 ? `${workout.duration} min`
                                 : 'Completed'}
                             </Text>
+                            <View className="flex-row items-center mt-2">
+                              <MaterialIcons name="schedule" size={14} color="#64748b" />
+                              <Text className="text-slate-400 text-xs ml-1">{formatTime(workout.date)}</Text>
+                            </View>
                           </View>
                         </View>
-                        <MaterialIcons name="chevron-right" size={24} color="#64748b" />
+                        <View
+                          style={{
+                            backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                            paddingHorizontal: 8,
+                            paddingVertical: 4,
+                            borderRadius: 6,
+                          }}>
+                          <Text className="text-purple-300 font-bold text-xs">Done</Text>
+                        </View>
                       </View>
-                      <View className="flex-row items-center mt-2">
-                        <MaterialIcons name="schedule" size={16} color="#64748b" />
-                        <Text className="text-slate-400 text-xs ml-1">{formatTime(workout.date)}</Text>
-                      </View>
-                    </View>
+                    </LinearGradient>
                   ))
                 ) : (
-                  <View className="bg-slate-800 border border-slate-700 rounded-2xl p-4 items-center py-6">
+                  <LinearGradient
+                    colors={['rgba(148, 163, 184, 0.1)', 'rgba(148, 163, 184, 0.05)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                      borderRadius: 12,
+                      paddingVertical: 24,
+                      alignItems: 'center',
+                      borderWidth: 1,
+                      borderColor: 'rgba(148, 163, 184, 0.15)',
+                    }}>
                     <MaterialIcons name="fitness-center" size={32} color="#64748b" />
-                    <Text className="text-slate-400 text-center mt-2">No workouts logged today</Text>
-                  </View>
+                    <Text className="text-slate-400 text-center mt-2 text-sm">No workouts logged today</Text>
+                  </LinearGradient>
                 )}
               </View>
 
               {/* Recent Scans */}
-              <View className="px-6 mb-8">
+              <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
                 <View className="flex-row justify-between items-center mb-4">
-                  <Text className="text-white text-lg font-semibold">Recent Scans</Text>
+                  <View className="flex-row items-center">
+                    <MaterialIcons name="restaurant" size={20} color="#f97316" style={{ marginRight: 8 }} />
+                    <Text className="text-white text-lg font-bold">Recent Scans</Text>
+                  </View>
                   {recentScans.length > 0 && (
                     <TouchableOpacity>
-                      <Text className="text-gray-300 text-sm">View All</Text>
+                      <Text className="text-orange-300 text-xs font-bold">View All</Text>
                     </TouchableOpacity>
                   )}
                 </View>
 
                 {recentScans.length > 0 ? (
                   recentScans.map((scan, index) => (
-                    <View key={index} className="bg-slate-800 border border-slate-700 rounded-2xl p-4 mb-3">
-                      <View className="flex-row justify-between items-center">
+                    <LinearGradient
+                      key={index}
+                      colors={['rgba(249, 115, 22, 0.1)', 'rgba(217, 119, 6, 0.05)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        borderRadius: 12,
+                        padding: 14,
+                        marginBottom: 10,
+                        borderWidth: 1,
+                        borderColor: 'rgba(249, 115, 22, 0.2)',
+                      }}>
+                      <View className="flex-row justify-between items-start">
                         <View className="flex-row items-center flex-1">
-                          <View className="bg-gray-500/20 rounded-xl p-3 mr-3">
-                            <MaterialIcons name="restaurant" size={24} color="#E5E7EB" />
+                          <View
+                            style={{
+                              width: 40,
+                              height: 40,
+                              borderRadius: 10,
+                              backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              marginRight: 12,
+                            }}>
+                            <MaterialIcons name="restaurant" size={18} color="#f97316" />
                           </View>
                           <View className="flex-1">
                             <Text className="text-white font-bold capitalize">{scan.name.replace(/_/g, ' ')}</Text>
-                            <Text className="text-gray-300 text-sm">
+                            <Text className="text-slate-400 text-xs mt-1">
                               {scan.calories} cal • {Math.round(scan.protein)}g Protein
                             </Text>
-                            <Text className="text-slate-400 text-xs mt-1">{getTimeAgo(scan.date)}</Text>
+                            <Text className="text-slate-500 text-xs mt-1">{getTimeAgo(scan.date)}</Text>
                           </View>
                         </View>
+                        <View
+                          style={{
+                            backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                            paddingHorizontal: 8,
+                            paddingVertical: 4,
+                            borderRadius: 6,
+                          }}>
+                          <Text className="text-orange-300 font-bold text-xs">{Math.round(scan.calories)} cal</Text>
+                        </View>
                       </View>
-                    </View>
+                    </LinearGradient>
                   ))
                 ) : (
-                  <View className="bg-slate-800 border border-slate-700 rounded-2xl p-4 items-center py-6">
+                  <LinearGradient
+                    colors={['rgba(148, 163, 184, 0.1)', 'rgba(148, 163, 184, 0.05)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                      borderRadius: 12,
+                      paddingVertical: 24,
+                      alignItems: 'center',
+                      borderWidth: 1,
+                      borderColor: 'rgba(148, 163, 184, 0.15)',
+                    }}>
                     <MaterialIcons name="restaurant" size={32} color="#64748b" />
-                    <Text className="text-slate-400 text-center mt-2">No food scans yet</Text>
-                  </View>
+                    <Text className="text-slate-400 text-center mt-2 text-sm">No food scans yet</Text>
+                  </LinearGradient>
                 )}
               </View>
             </>

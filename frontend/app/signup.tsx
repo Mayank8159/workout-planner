@@ -63,6 +63,7 @@ export default function SignUpScreen() {
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
       className="flex-1"
     >
       <LinearGradient
@@ -73,65 +74,169 @@ export default function SignUpScreen() {
           contentContainerStyle={{ flexGrow: 1 }}
           className="flex-1"
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          scrollEnabled={true}
         >
-          <View className="flex-1 justify-center px-6 py-12">
+          <View className="flex-1 justify-center px-6 py-12" style={{ paddingBottom: 100 }}>
             {/* Logo/Header */}
-            <View className="items-center mb-8">
-              <View className="bg-gray-400 rounded-full p-4 mb-4">
-                <MaterialIcons name="person-add" size={48} color="#0f172a" />
-              </View>
-              <Text className="text-white text-4xl font-bold mb-2">Create Account</Text>
-              <Text className="text-slate-400 text-base">Start your fitness transformation today</Text>
+            <View className="items-center mb-10">
+              <LinearGradient
+                colors={['rgba(34, 197, 94, 0.25)', 'rgba(34, 197, 94, 0.1)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 24,
+                  padding: 18,
+                  marginBottom: 20,
+                  borderWidth: 1,
+                  borderColor: 'rgba(34, 197, 94, 0.3)',
+                }}>
+                <MaterialIcons name="person-add" size={56} color="#22c55e" />
+              </LinearGradient>
+              <Text className="text-white text-4xl font-900 mb-3">Create Account</Text>
+              <Text className="text-slate-300 text-base text-center">Start your fitness transformation today</Text>
             </View>
 
             {/* Error Message */}
             {error ? (
-              <View className="bg-red-500/10 border border-red-500 rounded-2xl p-4 mb-4">
-                <Text className="text-red-500 text-center">{error}</Text>
-              </View>
+              <LinearGradient
+                colors={['rgba(239, 68, 68, 0.15)', 'rgba(239, 68, 68, 0.05)']}
+                style={{
+                  borderRadius: 14,
+                  padding: 14,
+                  marginBottom: 16,
+                  borderWidth: 1,
+                  borderColor: 'rgba(239, 68, 68, 0.3)',
+                }}>
+                <View className="flex-row items-center">
+                  <MaterialIcons name="error" size={18} color="#fca5a5" style={{ marginRight: 10 }} />
+                  <Text className="text-red-300 text-sm flex-1">{error}</Text>
+                </View>
+              </LinearGradient>
             ) : null}
 
             {/* Username Input */}
             <View className="mb-4">
-              <Text className="text-slate-300 text-sm mb-2 ml-1">Username</Text>
-              <View className="bg-slate-800 rounded-2xl flex-row items-center px-4 py-4 border border-slate-700">
-                <MaterialIcons name="person" size={20} color="#64748b" />
-                <TextInput
-                  className="flex-1 ml-3 text-white text-base"
-                  placeholder="Choose a username"
-                  placeholderTextColor="#64748b"
-                  value={username}
-                  onChangeText={setUsername}
-                  autoCapitalize="none"
-                />
+              <View className="flex-row items-center mb-3">
+                <View
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 10,
+                    borderWidth: 1,
+                    borderColor: 'rgba(34, 197, 94, 0.3)',
+                  }}>
+                  <MaterialIcons name="person" size={16} color="#22c55e" />
+                </View>
+                <Text className="text-slate-300 text-sm font-semibold">Username</Text>
               </View>
+              <LinearGradient
+                colors={['rgba(30, 41, 59, 0.4)', 'rgba(15, 23, 42, 0.6)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 14,
+                  paddingHorizontal: 4,
+                  borderWidth: 1.5,
+                  borderColor: 'rgba(34, 197, 94, 0.25)',
+                }}>
+                <View className="flex-row items-center px-4 py-4">
+                  <TextInput
+                    className="flex-1 text-white text-base"
+                    style={{ color: '#ffffff' }}
+                    placeholder="Choose a username"
+                    placeholderTextColor="#64748b"
+                    value={username}
+                    onChangeText={setUsername}
+                    autoCapitalize="none"
+                  />
+                </View>
+              </LinearGradient>
             </View>
 
             {/* Email Input */}
             <View className="mb-4">
-              <Text className="text-slate-300 text-sm mb-2 ml-1">Email Address</Text>
-              <View className="bg-slate-800 rounded-2xl flex-row items-center px-4 py-4 border border-slate-700">
-                <MaterialIcons name="email" size={20} color="#64748b" />
-                <TextInput
-                  className="flex-1 ml-3 text-white text-base"
-                  placeholder="your.email@example.com"
-                  placeholderTextColor="#64748b"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                />
+              <View className="flex-row items-center mb-3">
+                <View
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 10,
+                    borderWidth: 1,
+                    borderColor: 'rgba(59, 130, 246, 0.3)',
+                  }}>
+                  <MaterialIcons name="email" size={16} color="#3b82f6" />
+                </View>
+                <Text className="text-slate-300 text-sm font-semibold">Email Address</Text>
               </View>
+              <LinearGradient
+                colors={['rgba(30, 41, 59, 0.4)', 'rgba(15, 23, 42, 0.6)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 14,
+                  paddingHorizontal: 4,
+                  borderWidth: 1.5,
+                  borderColor: 'rgba(59, 130, 246, 0.25)',
+                }}>
+                <View className="flex-row items-center px-4 py-4">
+                  <TextInput
+                    className="flex-1 text-white text-base"
+                    style={{ color: '#ffffff' }}
+                    placeholder="your.email@example.com"
+                    placeholderTextColor="#64748b"
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                  />
+                </View>
+              </LinearGradient>
             </View>
 
             {/* Password Input */}
             <View className="mb-4">
-              <Text className="text-slate-300 text-sm mb-2 ml-1">Password</Text>
-              <View className="bg-slate-800 rounded-2xl flex-row items-center px-4 py-4 border border-slate-700">
-                <MaterialIcons name="lock" size={20} color="#64748b" />
+              <View className="flex-row items-center mb-3">
+                <View
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 10,
+                    borderWidth: 1,
+                    borderColor: 'rgba(168, 85, 247, 0.3)',
+                  }}>
+                  <MaterialIcons name="lock" size={16} color="#a855f7" />
+                </View>
+                <Text className="text-slate-300 text-sm font-semibold">Password</Text>
+              </View>
+              <LinearGradient
+                colors={['rgba(30, 41, 59, 0.4)', 'rgba(15, 23, 42, 0.6)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 14,
+                  paddingHorizontal: 4,
+                  borderWidth: 1.5,
+                  borderColor: 'rgba(168, 85, 247, 0.25)',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
                 <TextInput
-                  className="flex-1 ml-3 text-white text-base"
+                  className="flex-1 text-white text-base px-4 py-4"
+                  style={{ color: '#ffffff' }}
                   placeholder="Minimum 6 characters"
                   placeholderTextColor="#64748b"
                   value={password}
@@ -139,23 +244,50 @@ export default function SignUpScreen() {
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                 />
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)} className="pr-4">
                   <MaterialIcons 
                     name={showPassword ? "visibility" : "visibility-off"} 
                     size={20} 
-                    color="#64748b" 
+                    color="#a855f7" 
                   />
                 </TouchableOpacity>
-              </View>
+              </LinearGradient>
             </View>
 
             {/* Confirm Password Input */}
-            <View className="mb-6">
-              <Text className="text-slate-300 text-sm mb-2 ml-1">Confirm Password</Text>
-              <View className="bg-slate-800 rounded-2xl flex-row items-center px-4 py-4 border border-slate-700">
-                <MaterialIcons name="lock" size={20} color="#64748b" />
+            <View className="mb-8">
+              <View className="flex-row items-center mb-3">
+                <View
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 10,
+                    borderWidth: 1,
+                    borderColor: 'rgba(168, 85, 247, 0.3)',
+                  }}>
+                  <MaterialIcons name="lock" size={16} color="#a855f7" />
+                </View>
+                <Text className="text-slate-300 text-sm font-semibold">Confirm Password</Text>
+              </View>
+              <LinearGradient
+                colors={['rgba(30, 41, 59, 0.4)', 'rgba(15, 23, 42, 0.6)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 14,
+                  paddingHorizontal: 4,
+                  borderWidth: 1.5,
+                  borderColor: 'rgba(168, 85, 247, 0.25)',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
                 <TextInput
-                  className="flex-1 ml-3 text-white text-base"
+                  className="flex-1 text-white text-base px-4 py-4"
+                  style={{ color: '#ffffff' }}
                   placeholder="Re-enter your password"
                   placeholderTextColor="#64748b"
                   value={confirmPassword}
@@ -163,39 +295,53 @@ export default function SignUpScreen() {
                   secureTextEntry={!showConfirmPassword}
                   autoCapitalize="none"
                 />
-                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)} className="pr-4">
                   <MaterialIcons 
                     name={showConfirmPassword ? "visibility" : "visibility-off"} 
                     size={20} 
-                    color="#64748b" 
+                    color="#a855f7" 
                   />
                 </TouchableOpacity>
-              </View>
+              </LinearGradient>
             </View>
 
             {/* Sign Up Button */}
             <TouchableOpacity
               onPress={handleSignUp}
               disabled={loading}
-              className="mb-6"
+              className="mb-8"
             >
-              <View
-                className="rounded-2xl py-4 items-center bg-gray-300 border-2 border-gray-400"
-                style={{ shadowColor: '#000000', shadowOpacity: 0.45, shadowRadius: 10, elevation: 8 }}
-              >
+              <LinearGradient
+                colors={['rgba(34, 197, 94, 0.3)', 'rgba(34, 197, 94, 0.15)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 14,
+                  paddingVertical: 16,
+                  alignItems: 'center',
+                  borderWidth: 1.5,
+                  borderColor: 'rgba(34, 197, 94, 0.4)',
+                  shadowColor: '#22c55e',
+                  shadowOpacity: 0.3,
+                  shadowRadius: 10,
+                  elevation: 8,
+                }}>
                 {loading ? (
-                  <ActivityIndicator color="#0f172a" />
+                  <ActivityIndicator color="#22c55e" />
                 ) : (
-                  <Text className="text-slate-900 text-base font-bold">Create Account</Text>
+                  <View className="flex-row items-center justify-center">
+                    <MaterialIcons name="person-add" size={20} color="#22c55e" />
+                    <Text className="text-green-300 text-base font-bold ml-2">Create Account</Text>
+                  </View>
                 )}
-              </View>
+              </LinearGradient>
             </TouchableOpacity>
 
             {/* Login Link */}
-            <View className="flex-row justify-center">
+            <View className="flex-row justify-center items-center">
               <Text className="text-slate-400">Already have an account? </Text>
               <TouchableOpacity onPress={() => router.replace('/login')}>
-                <Text className="text-gray-300 font-semibold">Sign In</Text>
+                <Text className="text-green-300 font-semibold">Sign In</Text>
               </TouchableOpacity>
             </View>
           </View>

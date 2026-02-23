@@ -13,6 +13,7 @@ import {
   Modal,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { MaterialIcons } from '@expo/vector-icons';
 import { dataAPI } from '@/utils/api';
 import { useUser } from '@/context/UserContext';
@@ -251,139 +252,259 @@ export default function WorkoutLoggerScreen() {
           className="flex-1"
         >
           <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 140 }}>
-            {/* Header */}
-            <View className="pt-6 pb-6 px-6">
-              <View className="flex-row justify-between items-center">
-                <View>
-                  <Text className="text-white text-3xl font-bold">Workout Logger</Text>
-                  <Text className="text-slate-400 text-sm mt-1">Track your exercises</Text>
+            {/* Header with Gradient Background */}
+            <LinearGradient
+              colors={['rgba(139, 92, 246, 0.15)', 'rgba(15, 23, 42, 0)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24 }}>
+              <View className="flex-row justify-between items-start">
+                <View className="flex-1">
+                  <Text className="text-white text-4xl font-900">Workout Logger</Text>
+                  <Text className="text-slate-400 text-sm mt-2">Track your progress today</Text>
                 </View>
-                <View className="bg-gray-500/20 rounded-2xl px-4 py-2">
-                  <Text className="text-gray-300 font-bold">
-                    {savedWorkouts.length + exercises.reduce((acc, ex) => acc + ex.sets.filter(s => s.completed).length, 0)} /{' '}
-                    {savedWorkouts.length + exercises.reduce((acc, ex) => acc + ex.sets.length, 0)} completed
+                <LinearGradient
+                  colors={['rgba(168, 85, 247, 0.2)', 'rgba(139, 92, 246, 0.1)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 12,
+                    padding: 12,
+                    borderWidth: 1,
+                    borderColor: 'rgba(168, 85, 247, 0.3)',
+                  }}>
+                  <Text className="text-purple-300 font-bold text-sm">
+                    {savedWorkouts.length + exercises.reduce((acc, ex) => acc + ex.sets.filter(s => s.completed).length, 0)}/
+                    <Text className="text-slate-400">{savedWorkouts.length + exercises.reduce((acc, ex) => acc + ex.sets.length, 0)}</Text>
                   </Text>
-                </View>
+                  <Text className="text-purple-300 text-xs">completed</Text>
+                </LinearGradient>
               </View>
-            </View>
+            </LinearGradient>
 
             {/* Error Message */}
             {error && (
-              <View className="mx-6 mb-4 bg-red-500/20 border border-red-500 rounded-xl p-3">
-                <Text className="text-red-300 text-sm">{error}</Text>
-              </View>
+              <LinearGradient
+                colors={['rgba(239, 68, 68, 0.15)', 'rgba(239, 68, 68, 0.05)']}
+                style={{
+                  marginHorizontal: 20,
+                  marginBottom: 16,
+                  borderRadius: 12,
+                  padding: 12,
+                  borderWidth: 1,
+                  borderColor: 'rgba(239, 68, 68, 0.3)',
+                }}>
+                <View className="flex-row items-start">
+                  <MaterialIcons name="error" size={18} color="#fca5a5" style={{ marginRight: 8 }} />
+                  <Text className="text-red-300 text-sm flex-1">{error}</Text>
+                </View>
+              </LinearGradient>
             )}
 
             {/* Success Message */}
             {successMessage && (
-              <View className="mx-6 mb-4 bg-gray-500/20 border border-gray-500 rounded-xl p-3">
-                <Text className="text-gray-200 text-sm">{successMessage}</Text>
-              </View>
+              <LinearGradient
+                colors={['rgba(34, 197, 94, 0.15)', 'rgba(34, 197, 94, 0.05)']}
+                style={{
+                  marginHorizontal: 20,
+                  marginBottom: 16,
+                  borderRadius: 12,
+                  padding: 12,
+                  borderWidth: 1,
+                  borderColor: 'rgba(34, 197, 94, 0.3)',
+                }}>
+                <View className="flex-row items-center">
+                  <MaterialIcons name="check-circle" size={18} color="#86efac" style={{ marginRight: 8 }} />
+                  <Text className="text-green-300 text-sm flex-1">{successMessage}</Text>
+                </View>
+              </LinearGradient>
             )}
 
-            {/* Add Exercise Button */}
-            <View className="px-6 mb-6">
-              <TouchableOpacity onPress={() => setShowModal(true)}>
-                <View
-                  className="rounded-2xl py-4 items-center flex-row justify-center bg-gray-300 border-2 border-gray-400"
+            {/* Quick Add Button */}
+            <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
+              <TouchableOpacity onPress={() => setShowModal(true)} activeOpacity={0.8}>
+                <LinearGradient
+                  colors={['rgba(168, 85, 247, 0.25)', 'rgba(168, 85, 247, 0.1)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
                   style={{
-                    shadowColor: '#000000',
-                    shadowOpacity: 0.45,
-                    shadowRadius: 10,
-                    elevation: 8,
-                  }}
-                >
-                  <MaterialIcons name="add" size={24} color="#6B21A8" />
-                  <Text className="text-gray-800 text-lg font-bold ml-2">Add Exercise</Text>
-                </View>
+                    borderRadius: 14,
+                    padding: 16,
+                    borderWidth: 1.5,
+                    borderColor: 'rgba(168, 85, 247, 0.4)',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <MaterialIcons name="add-circle" size={22} color="#c084fc" />
+                  <Text className="text-purple-300 text-base font-bold ml-2">Add New Exercise</Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
 
-            {/* Saved Workouts Section */}
+            {/* Saved Workouts Today */}
             {isFetchingWorkouts ? (
-              <View className="px-6 mb-6 items-center">
+              <View className="px-6 mb-8 items-center">
                 <ActivityIndicator size="small" color="#E5E7EB" />
               </View>
             ) : savedWorkouts.length > 0 ? (
-              <View className="px-6 mb-6">
-                <Text className="text-white text-lg font-bold mb-3">Today's Workouts</Text>
+              <View style={{ paddingHorizontal: 20, marginBottom: 28 }}>
+                <View className="flex-row items-center mb-4">
+                  <MaterialIcons name="today" size={20} color="#60a5fa" style={{ marginRight: 8 }} />
+                  <Text className="text-white text-lg font-800">Today's Workouts</Text>
+                </View>
                 {savedWorkouts.map((workout, index) => (
-                  <View
+                  <LinearGradient
                     key={`${workout.id}-${index}`}
-                    className="bg-slate-800 border border-gray-500/30 rounded-xl p-4 mb-3 flex-row items-center justify-between"
-                  >
+                    colors={['rgba(96, 165, 250, 0.1)', 'rgba(59, 130, 246, 0.05)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                      borderRadius: 12,
+                      padding: 14,
+                      marginBottom: 10,
+                      borderWidth: 1,
+                      borderColor: 'rgba(96, 165, 250, 0.2)',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}>
                     <View className="flex-row items-center flex-1">
-                      <View className="bg-gray-500/20 rounded-full p-2 mr-3">
-                        <MaterialIcons name="check-circle" size={20} color="#E5E7EB" />
+                      <View
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 9,
+                          backgroundColor: 'rgba(96, 165, 250, 0.2)',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          marginRight: 12,
+                        }}>
+                        <MaterialIcons name="check-circle" size={18} color="#60a5fa" />
                       </View>
-                      <View>
-                        <Text className="text-white font-semibold">{workout.exercise}</Text>
-                        <Text className="text-slate-400 text-sm">
+                      <View className="flex-1">
+                        <Text className="text-white font-bold">{workout.exercise}</Text>
+                        <Text className="text-slate-400 text-xs mt-1">
                           {workout.reps > 0 && `${workout.reps} reps`}
                           {workout.weight > 0 && ` • ${workout.weight} lbs`}
                           {workout.duration > 0 && ` • ${workout.duration} min`}
                         </Text>
                       </View>
                     </View>
-                    <Text className="text-orange-400 font-bold text-sm">Set {workout.sets}</Text>
-                  </View>
+                    <View
+                      style={{
+                        backgroundColor: 'rgba(96, 165, 250, 0.15)',
+                        paddingHorizontal: 10,
+                        paddingVertical: 4,
+                        borderRadius: 8,
+                      }}>
+                      <Text className="text-blue-300 font-bold text-xs">Set {workout.sets}</Text>
+                    </View>
+                  </LinearGradient>
                 ))}
               </View>
             ) : null}
 
             {/* Exercise List */}
-            <View className="px-6 pb-8">
+            <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
               {exercises.length === 0 ? (
-                <View className="bg-slate-800 border border-slate-700 rounded-2xl p-8 items-center">
+                <LinearGradient
+                  colors={['rgba(51, 65, 85, 0.3)', 'rgba(51, 65, 85, 0.1)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 14,
+                    padding: 32,
+                    alignItems: 'center',
+                    borderWidth: 1,
+                    borderColor: 'rgba(148, 163, 184, 0.2)',
+                  }}>
                   <MaterialIcons name="fitness-center" size={48} color="#64748b" />
-                  <Text className="text-slate-400 text-center mt-4">No exercises added yet</Text>
-                  <Text className="text-slate-500 text-center text-sm mt-2">Tap the Add Exercise button to get started</Text>
-                </View>
+                  <Text className="text-slate-400 text-center mt-4 font-semibold">No exercises added yet</Text>
+                  <Text className="text-slate-500 text-center text-xs mt-2">Get started by adding your first exercise</Text>
+                </LinearGradient>
               ) : (
                 exercises.map(exercise => (
-                  <View
+                  <LinearGradient
                     key={exercise.id}
-                    className="bg-slate-800 border border-slate-700 rounded-2xl p-5 mb-4"
-                  >
+                    colors={['rgba(51, 65, 85, 0.3)', 'rgba(51, 65, 85, 0.1)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                      borderRadius: 14,
+                      padding: 16,
+                      marginBottom: 14,
+                      borderWidth: 1,
+                      borderColor: 'rgba(148, 163, 184, 0.2)',
+                    }}>
                     {/* Exercise Header */}
                     <View className="flex-row justify-between items-center mb-4">
                       <View className="flex-row items-center flex-1">
-                        <View className="bg-gray-500/20 rounded-full p-2 mr-3">
-                          <MaterialIcons name="fitness-center" size={20} color="#E5E7EB" />
+                        <View
+                          style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: 9,
+                            backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginRight: 12,
+                          }}>
+                          <MaterialIcons name="fitness-center" size={18} color="#c084fc" />
                         </View>
                         <Text className="text-white text-lg font-bold">{exercise.name}</Text>
                       </View>
                       <TouchableOpacity
                         onPress={() => deleteExercise(exercise.id)}
-                        className="bg-red-500/20 rounded-full p-2"
-                      >
-                        <MaterialIcons name="delete" size={18} color="#ef4444" />
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 9,
+                          backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        <MaterialIcons name="delete" size={18} color="#fca5a5" />
                       </TouchableOpacity>
                     </View>
 
                     {/* Sets Header */}
-                    <View className="flex-row mb-2 pb-2 border-b border-slate-700">
-                      <Text className="text-slate-400 text-xs w-12 text-center">SET</Text>
-                      <Text className="text-slate-400 text-xs flex-1 text-center">REPS</Text>
-                      <Text className="text-slate-400 text-xs flex-1 text-center">WEIGHT (lbs)</Text>
-                      <Text className="text-slate-400 text-xs flex-1 text-center">DURATION (min)</Text>
-                      <View className="w-12" />
+                    <View style={{ flexDirection: 'row', marginBottom: 12, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(148, 163, 184, 0.15)' }}>
+                      <Text className="text-slate-400 text-xs w-10 text-center font-bold">S</Text>
+                      <Text className="text-slate-400 text-xs flex-1 text-center font-bold">REPS</Text>
+                      <Text className="text-slate-400 text-xs flex-1 text-center font-bold">WEIGHT</Text>
+                      <Text className="text-slate-400 text-xs flex-1 text-center font-bold">MINS</Text>
+                      <View style={{ width: 36 }} />
                     </View>
 
                     {/* Sets */}
                     {exercise.sets.map((set, index) => (
                       <View key={set.id} className="flex-row items-center mb-3">
                         {/* Set Number */}
-                        <View className="w-12 items-center">
-                          <View className="bg-slate-700 rounded-lg px-2 py-1">
-                            <Text className="text-white font-bold text-sm">{index + 1}</Text>
+                        <View className="w-10 items-center">
+                          <View
+                            style={{
+                              backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                              borderRadius: 8,
+                              paddingHorizontal: 6,
+                              paddingVertical: 4,
+                              borderWidth: 1,
+                              borderColor: 'rgba(168, 85, 247, 0.2)',
+                            }}>
+                            <Text className="text-purple-300 font-bold text-sm">{index + 1}</Text>
                           </View>
                         </View>
 
                         {/* Reps Input */}
                         <View className="flex-1 px-1">
                           <TextInput
-                            className="bg-slate-900 text-white text-center py-2 rounded-lg"
+                            className="text-white text-center py-2 rounded-lg"
+                            style={{
+                              backgroundColor: 'rgba(15, 23, 42, 0.6)',
+                              borderWidth: 1,
+                              borderColor: 'rgba(148, 163, 184, 0.2)',
+                              color: '#ffffff',
+                            }}
                             placeholder="0"
                             placeholderTextColor="#64748b"
                             keyboardType="numeric"
@@ -395,7 +516,13 @@ export default function WorkoutLoggerScreen() {
                         {/* Weight Input */}
                         <View className="flex-1 px-1">
                           <TextInput
-                            className="bg-slate-900 text-white text-center py-2 rounded-lg"
+                            className="text-white text-center py-2 rounded-lg"
+                            style={{
+                              backgroundColor: 'rgba(15, 23, 42, 0.6)',
+                              borderWidth: 1,
+                              borderColor: 'rgba(148, 163, 184, 0.2)',
+                              color: '#ffffff',
+                            }}
                             placeholder="0"
                             placeholderTextColor="#64748b"
                             keyboardType="numeric"
@@ -407,7 +534,13 @@ export default function WorkoutLoggerScreen() {
                         {/* Duration Input */}
                         <View className="flex-1 px-1">
                           <TextInput
-                            className="bg-slate-900 text-white text-center py-2 rounded-lg"
+                            className="text-white text-center py-2 rounded-lg"
+                            style={{
+                              backgroundColor: 'rgba(15, 23, 42, 0.6)',
+                              borderWidth: 1,
+                              borderColor: 'rgba(148, 163, 184, 0.2)',
+                              color: '#ffffff',
+                            }}
                             placeholder="0"
                             placeholderTextColor="#64748b"
                             keyboardType="numeric"
@@ -419,17 +552,20 @@ export default function WorkoutLoggerScreen() {
                         {/* Checkbox */}
                         <TouchableOpacity
                           onPress={() => toggleSetComplete(exercise.id, set.id)}
-                          className="w-12 items-center"
-                        >
+                          style={{ width: 36, alignItems: 'center' }}>
                           <View
-                            className={`w-8 h-8 rounded-lg border-2 items-center justify-center ${
-                              set.completed
-                                ? 'bg-gray-400 border-gray-400'
-                                : 'border-slate-600'
-                            }`}
-                          >
+                            style={{
+                              width: 28,
+                              height: 28,
+                              borderRadius: 7,
+                              borderWidth: 2,
+                              borderColor: set.completed ? '#22c55e' : 'rgba(148, 163, 184, 0.3)',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              backgroundColor: set.completed ? 'rgba(34, 197, 94, 0.2)' : 'transparent',
+                            }}>
                             {set.completed && (
-                              <MaterialIcons name="check" size={20} color="#0f172a" />
+                              <MaterialIcons name="check" size={16} color="#22c55e" />
                             )}
                           </View>
                         </TouchableOpacity>
@@ -439,35 +575,49 @@ export default function WorkoutLoggerScreen() {
                     {/* Add Set Button */}
                     <TouchableOpacity
                       onPress={() => addSet(exercise.id)}
-                      className="bg-slate-700 rounded-xl py-2 mt-2 flex-row items-center justify-center"
-                    >
-                      <MaterialIcons name="add" size={18} color="#E5E7EB" />
-                      <Text className="text-gray-300 ml-1 font-semibold">Add Set</Text>
+                      style={{
+                        backgroundColor: 'rgba(148, 163, 184, 0.15)',
+                        borderRadius: 10,
+                        paddingVertical: 10,
+                        marginTop: 8,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 1,
+                        borderColor: 'rgba(148, 163, 184, 0.2)',
+                      }}>
+                      <MaterialIcons name="add" size={16} color="#cbd5e1" />
+                      <Text className="text-slate-300 ml-1 font-semibold text-sm">Add Set</Text>
                     </TouchableOpacity>
-                  </View>
+                  </LinearGradient>
                 ))
               )}
             </View>
 
             {/* Save Workout Button */}
-            <View className="px-6 pb-8">
-              <TouchableOpacity onPress={saveWorkout} disabled={isLoading}>
-                <View
-                  className="rounded-2xl py-4 items-center bg-gray-300 border-2 border-gray-400"
+            <View style={{ paddingHorizontal: 20, paddingBottom: 24 }}>
+              <TouchableOpacity onPress={saveWorkout} disabled={isLoading} activeOpacity={0.8}>
+                <LinearGradient
+                  colors={isLoading ? ['rgba(96, 165, 250, 0.15)', 'rgba(59, 130, 246, 0.08)'] : ['rgba(96, 165, 250, 0.3)', 'rgba(59, 130, 246, 0.15)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
                   style={{
-                    shadowColor: '#000000',
-                    shadowOpacity: 0.5,
-                    shadowRadius: 8,
-                    elevation: 10,
-                    opacity: isLoading ? 0.6 : 1,
-                  }}
-                >
+                    borderRadius: 14,
+                    paddingVertical: 16,
+                    alignItems: 'center',
+                    borderWidth: 1.5,
+                    borderColor: 'rgba(96, 165, 250, 0.4)',
+                    opacity: isLoading ? 0.7 : 1,
+                  }}>
                   {isLoading ? (
-                    <ActivityIndicator size="small" color="#0f172a" />
+                    <ActivityIndicator size="small" color="#60a5fa" />
                   ) : (
-                    <Text className="text-slate-900 text-lg font-bold">Save Workout</Text>
+                    <View className="flex-row items-center">
+                      <MaterialIcons name="save" size={20} color="#60a5fa" />
+                      <Text className="text-blue-300 text-base font-bold ml-2">Save Workout</Text>
+                    </View>
                   )}
-                </View>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
           </ScrollView>
@@ -478,72 +628,229 @@ export default function WorkoutLoggerScreen() {
           visible={showModal}
           transparent
           animationType="fade"
-          onRequestClose={() => setShowModal(false)}
-        >
-          <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <View className="bg-slate-800 border border-slate-700 rounded-2xl p-6 w-full max-w-96">
-              <View className="flex-row justify-between items-center mb-6">
-                <Text className="text-white text-2xl font-bold">Add Exercise</Text>
-                <TouchableOpacity onPress={() => setShowModal(false)}>
-                  <MaterialIcons name="close" size={28} color="#64748b" />
-                </TouchableOpacity>
-              </View>
+          onRequestClose={() => setShowModal(false)}>
+          <BlurView intensity={90} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              keyboardVerticalOffset={120}
+              style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16 }}>
+              <ScrollView
+                contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+                keyboardDismissMode="on-drag"
+                scrollEnabled={true}>
+              <LinearGradient
+                colors={['rgba(51, 65, 85, 0.95)', 'rgba(30, 41, 59, 0.95)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 24,
+                  padding: 28,
+                  width: '100%',
+                  maxWidth: 500,
+                  borderWidth: 1,
+                  borderColor: 'rgba(168, 85, 247, 0.4)',
+                  shadowColor: '#000000',
+                  shadowOpacity: 0.5,
+                  shadowRadius: 20,
+                  shadowOffset: { width: 0, height: 10 },
+                  elevation: 20,
+                  paddingBottom: 40,
+                }}>
+                {/* Modal Header with Gradient Background */}
+                <LinearGradient
+                  colors={['rgba(168, 85, 247, 0.2)', 'rgba(168, 85, 247, 0.05)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 16,
+                    padding: 16,
+                    marginBottom: 24,
+                    borderWidth: 1,
+                    borderColor: 'rgba(168, 85, 247, 0.3)',
+                  }}>
+                  <View className="flex-row justify-between items-start">
+                    <View className="flex-1">
+                      <Text className="text-white text-2xl font-900">Add Exercise</Text>
+                      <Text className="text-slate-300 text-sm mt-2">Log a new workout session</Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => setShowModal(false)}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 12,
+                        backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginLeft: 12,
+                      }}>
+                      <MaterialIcons name="close" size={22} color="#ef4444" />
+                    </TouchableOpacity>
+                  </View>
+                </LinearGradient>
 
-              {/* Exercise Name Input */}
-              <View className="mb-4">
-                <Text className="text-white font-semibold mb-2">Exercise Name</Text>
-                <TextInput
-                  className="bg-slate-900 text-white px-4 py-3 rounded-xl border border-slate-700"
-                  placeholder="e.g., Bench Press, Squats..."
-                  placeholderTextColor="#64748b"
-                  value={formData.name}
-                  onChangeText={(text) => setFormData({ ...formData, name: text })}
-                />
-              </View>
+                {/* Exercise Name Input */}
+                <View className="mb-5">
+                  <View className="flex-row items-center mb-3">
+                    <View
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 10,
+                        backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 10,
+                        borderWidth: 1,
+                        borderColor: 'rgba(168, 85, 247, 0.3)',
+                      }}>
+                      <MaterialIcons name="fitness-center" size={18} color="#c084fc" />
+                    </View>
+                    <Text className="text-white font-bold text-sm">Exercise Name</Text>
+                  </View>
+                  <TextInput
+                    className="text-white px-4 py-4 rounded-lg"
+                    style={{
+                      backgroundColor: 'rgba(15, 23, 42, 0.6)',
+                      borderWidth: 1.5,
+                      borderColor: 'rgba(168, 85, 247, 0.25)',
+                      color: '#ffffff',
+                      fontSize: 15,
+                    }}
+                    placeholder="e.g., Bench Press"
+                    placeholderTextColor="#64748b"
+                    value={formData.name}
+                    onChangeText={(text) => setFormData({ ...formData, name: text })}
+                  />
+                </View>
 
-              {/* Reps Per Set Input */}
-              <View className="mb-4">
-                <Text className="text-white font-semibold mb-2">Reps Per Set</Text>
-                <TextInput
-                  className="bg-slate-900 text-white px-4 py-3 rounded-xl border border-slate-700"
-                  placeholder="e.g., 10, 8, 12..."
-                  placeholderTextColor="#64748b"
-                  keyboardType="numeric"
-                  value={formData.reps}
-                  onChangeText={(text) => setFormData({ ...formData, reps: text })}
-                />
-              </View>
+                {/* Reps Per Set Input */}
+                <View className="mb-5">
+                  <View className="flex-row items-center mb-3">
+                    <View
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 10,
+                        backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 10,
+                        borderWidth: 1,
+                        borderColor: 'rgba(59, 130, 246, 0.3)',
+                      }}>
+                      <MaterialIcons name="repeat" size={18} color="#3b82f6" />
+                    </View>
+                    <Text className="text-white font-bold text-sm">Reps Per Set</Text>
+                  </View>
+                  <TextInput
+                    className="text-white px-4 py-4 rounded-lg"
+                    style={{
+                      backgroundColor: 'rgba(15, 23, 42, 0.6)',
+                      borderWidth: 1.5,
+                      borderColor: 'rgba(59, 130, 246, 0.25)',
+                      color: '#ffffff',
+                      fontSize: 15,
+                    }}
+                    placeholder="e.g., 10"
+                    placeholderTextColor="#64748b"
+                    keyboardType="numeric"
+                    value={formData.reps}
+                    onChangeText={(text) => setFormData({ ...formData, reps: text })}
+                  />
+                </View>
 
-              {/* Number of Sets Input */}
-              <View className="mb-6">
-                <Text className="text-white font-semibold mb-2">Number of Sets</Text>
-                <TextInput
-                  className="bg-slate-900 text-white px-4 py-3 rounded-xl border border-slate-700"
-                  placeholder="e.g., 3, 4, 5..."
-                  placeholderTextColor="#64748b"
-                  keyboardType="numeric"
-                  value={formData.sets}
-                  onChangeText={(text) => setFormData({ ...formData, sets: text })}
-                />
-              </View>
+                {/* Number of Sets Input */}
+                <View className="mb-7">
+                  <View className="flex-row items-center mb-3">
+                    <View
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 10,
+                        backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginRight: 10,
+                        borderWidth: 1,
+                        borderColor: 'rgba(34, 197, 94, 0.3)',
+                      }}>
+                      <MaterialIcons name="layers" size={18} color="#22c55e" />
+                    </View>
+                    <Text className="text-white font-bold text-sm">Number of Sets</Text>
+                  </View>
+                  <TextInput
+                    className="text-white px-4 py-4 rounded-lg"
+                    style={{
+                      backgroundColor: 'rgba(15, 23, 42, 0.6)',
+                      borderWidth: 1.5,
+                      borderColor: 'rgba(34, 197, 94, 0.25)',
+                      color: '#ffffff',
+                      fontSize: 15,
+                    }}
+                    placeholder="e.g., 3"
+                    placeholderTextColor="#64748b"
+                    keyboardType="numeric"
+                    value={formData.sets}
+                    onChangeText={(text) => setFormData({ ...formData, sets: text })}
+                  />
+                </View>
 
-              {/* Action Buttons */}
-              <View className="flex-row gap-3">
-                <TouchableOpacity
-                  onPress={() => setShowModal(false)}
-                  className="flex-1 bg-slate-700 rounded-xl py-3"
-                >
-                  <Text className="text-white text-center font-semibold">Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={addExerciseFromForm}
-                  className="flex-1 bg-gray-400 rounded-xl py-3"
-                >
-                  <Text className="text-slate-900 text-center font-bold">Add</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
+                {/* Action Buttons */}
+                <View className="flex-row gap-3">
+                  <TouchableOpacity
+                    onPress={() => setShowModal(false)}
+                    className="flex-1"
+                    style={{
+                      paddingVertical: 14,
+                      borderRadius: 12,
+                    }}>
+                    <LinearGradient
+                      colors={['rgba(71, 85, 105, 0.3)', 'rgba(51, 65, 85, 0.5)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        borderRadius: 12,
+                        paddingVertical: 14,
+                        alignItems: 'center',
+                        borderWidth: 1,
+                        borderColor: 'rgba(148, 163, 184, 0.3)',
+                      }}>
+                      <View className="flex-row items-center justify-center">
+                        <MaterialIcons name="close" size={18} color="#cbd5e1" />
+                        <Text className="text-slate-300 text-center font-bold ml-2">Cancel</Text>
+                      </View>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={addExerciseFromForm}
+                    className="flex-1">
+                    <LinearGradient
+                      colors={['rgba(168, 85, 247, 0.4)', 'rgba(168, 85, 247, 0.2)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        borderRadius: 12,
+                        paddingVertical: 14,
+                        alignItems: 'center',
+                        borderWidth: 1.5,
+                        borderColor: 'rgba(168, 85, 247, 0.5)',
+                        shadowColor: '#a855f7',
+                        shadowOpacity: 0.3,
+                        shadowRadius: 8,
+                        elevation: 8,
+                      }}>
+                      <View className="flex-row items-center justify-center">
+                        <MaterialIcons name="add-circle" size={18} color="#e9d5ff" />
+                        <Text className="text-purple-200 text-center font-bold ml-2">Add Exercise</Text>
+                      </View>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
+              </LinearGradient>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </BlurView>
         </Modal>
       </LinearGradient>
     </SafeAreaView>

@@ -43,45 +43,64 @@ export default function ProfileScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#0f172a' }}>
       <ScrollView style={{ flex: 1, backgroundColor: '#0f172a' }} contentContainerStyle={{ padding: 20, paddingBottom: 140 }}>
         {/* Header */}
-        <View style={{ marginBottom: 30 }}>
-          <Text style={{ fontSize: 28, fontWeight: '700', color: '#ffffff', marginBottom: 8 }}>
-            Profile
-          </Text>
-          <Text style={{ fontSize: 14, color: '#94a3b8' }}>
-            Manage your account
-          </Text>
-        </View>
-
-        {/* User Info Card */}
         <LinearGradient
-          colors={['rgba(16, 185, 129, 0.1)', 'rgba(16, 185, 129, 0.05)']}
+          colors={['rgba(236, 72, 153, 0.15)', 'rgba(236, 72, 153, 0.05)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
-            borderRadius: 16,
+            borderRadius: 20,
             padding: 20,
-            marginBottom: 24,
+            marginBottom: 30,
             borderWidth: 1,
-            borderColor: 'rgba(16, 185, 129, 0.3)',
+            borderColor: 'rgba(236, 72, 153, 0.3)',
+          }}>
+          <Text style={{ fontSize: 32, fontWeight: '800', color: '#ffffff', marginBottom: 6 }}>
+            Profile
+          </Text>
+          <Text style={{ fontSize: 14, color: '#cbd5e1' }}>
+            Manage your account and settings
+          </Text>
+        </LinearGradient>
+
+        {/* User Info Card */}
+        <LinearGradient
+          colors={['rgba(236, 72, 153, 0.12)', 'rgba(236, 72, 153, 0.06)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            borderRadius: 20,
+            padding: 24,
+            marginBottom: 28,
+            borderWidth: 1,
+            borderColor: 'rgba(236, 72, 153, 0.35)',
+            shadowColor: '#000000',
+            shadowOpacity: 0.2,
+            shadowRadius: 10,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: 8,
           }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-            <View
+            <LinearGradient
+              colors={['rgba(236, 72, 153, 0.25)', 'rgba(236, 72, 153, 0.1)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
               style={{
-                width: 60,
-                height: 60,
-                borderRadius: 30,
-                backgroundColor: 'rgba(229, 231, 235, 0.2)',
+                width: 64,
+                height: 64,
+                borderRadius: 32,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginRight: 16,
+                borderWidth: 2,
+                borderColor: 'rgba(236, 72, 153, 0.3)',
               }}>
-              <MaterialIcons name="person" size={32} color="#E5E7EB" />
-            </View>
+              <MaterialIcons name="person" size={32} color="#ec4899" />
+            </LinearGradient>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 18, fontWeight: '700', color: '#ffffff' }}>
+              <Text style={{ fontSize: 20, fontWeight: '800', color: '#ffffff' }}>
                 {user?.username || 'User'}
               </Text>
-              <Text style={{ fontSize: 13, color: '#94a3b8', marginTop: 4 }}>
+              <Text style={{ fontSize: 13, color: '#94a3b8', marginTop: 6 }}>
                 {user?.email || 'user@example.com'}
               </Text>
             </View>
@@ -89,87 +108,126 @@ export default function ProfileScreen() {
         </LinearGradient>
 
         {/* User Stats */}
-        <View style={{ marginBottom: 24 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#e2e8f0', marginBottom: 12 }}>
-            Account Info
+        <View style={{ marginBottom: 28 }}>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: '#e2e8f0', marginBottom: 14 }}>
+            Account Information
           </Text>
-          <View style={{
-            backgroundColor: 'rgba(15, 23, 42, 0.8)',
-            borderRadius: 12,
-            padding: 16,
-            borderWidth: 1,
-            borderColor: 'rgba(51, 65, 85, 0.5)',
-            marginBottom: 12,
-          }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <Text style={{ fontSize: 14, color: '#94a3b8' }}>User ID</Text>
-              <Text style={{ fontSize: 14, fontWeight: '600', color: '#e2e8f0' }}>
+          <LinearGradient
+            colors={['rgba(30, 41, 59, 0.5)', 'rgba(15, 23, 42, 0.7)']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              borderRadius: 16,
+              padding: 18,
+              marginBottom: 12,
+              borderWidth: 1,
+              borderColor: 'rgba(71, 85, 105, 0.4)',
+            }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text style={{ fontSize: 14, color: '#94a3b8', fontWeight: '500' }}>User ID</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#cbd5e1' }}>
                 {user?.id || 'N/A'}
               </Text>
             </View>
-          </View>
-          <View style={{
-            backgroundColor: 'rgba(15, 23, 42, 0.8)',
-            borderRadius: 12,
-            padding: 16,
-            borderWidth: 1,
-            borderColor: 'rgba(51, 65, 85, 0.5)',
-          }}>
+          </LinearGradient>
+          <LinearGradient
+            colors={['rgba(30, 41, 59, 0.5)', 'rgba(15, 23, 42, 0.7)']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              borderRadius: 16,
+              padding: 18,
+              borderWidth: 1,
+              borderColor: 'rgba(71, 85, 105, 0.4)',
+            }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ fontSize: 14, color: '#94a3b8' }}>Member Since</Text>
-              <Text style={{ fontSize: 14, fontWeight: '600', color: '#e2e8f0' }}>
+              <Text style={{ fontSize: 14, color: '#94a3b8', fontWeight: '500' }}>Member Since</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#cbd5e1' }}>
                 {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
               </Text>
             </View>
-          </View>
+          </LinearGradient>
         </View>
 
         {/* Quick Actions */}
-        <View style={{ marginBottom: 24 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#e2e8f0', marginBottom: 12 }}>
-            Quick Links
+        <View style={{ marginBottom: 28 }}>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: '#e2e8f0', marginBottom: 14 }}>
+            Quick Actions
           </Text>
           
           <TouchableOpacity
             style={{
-              backgroundColor: 'rgba(15, 23, 42, 0.8)',
-              borderRadius: 12,
-              padding: 16,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              borderWidth: 1,
-              borderColor: 'rgba(51, 65, 85, 0.5)',
               marginBottom: 12,
             }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <MaterialIcons name="settings" size={24} color="#E5E7EB" />
-              <Text style={{ fontSize: 15, fontWeight: '600', color: '#e2e8f0', marginLeft: 12 }}>
-                Settings
-              </Text>
-            </View>
-            <MaterialIcons name="chevron-right" size={20} color="#64748b" />
+            <LinearGradient
+              colors={['rgba(59, 130, 246, 0.12)', 'rgba(59, 130, 246, 0.06)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                borderRadius: 16,
+                padding: 18,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderWidth: 1,
+                borderColor: 'rgba(59, 130, 246, 0.3)',
+              }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 12,
+                  backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginRight: 12,
+                }}>
+                  <MaterialIcons name="settings" size={22} color="#3b82f6" />
+                </View>
+                <Text style={{ fontSize: 15, fontWeight: '600', color: '#e2e8f0' }}>
+                  Settings
+                </Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={22} color="#64748b" />
+            </LinearGradient>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => router.push('/help-support')}
             style={{
-              backgroundColor: 'rgba(15, 23, 42, 0.8)',
-              borderRadius: 12,
-              padding: 16,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              borderWidth: 1,
-              borderColor: 'rgba(51, 65, 85, 0.5)',
+              marginBottom: 12,
             }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialIcons name="help" size={20} color="#E5E7EB" />
-              <Text style={{ fontSize: 15, fontWeight: '600', color: '#e2e8f0', marginLeft: 12 }}>
-                Help & Support
-              </Text>
-            </View>
-            <MaterialIcons name="chevron-right" size={20} color="#64748b" />
+            <LinearGradient
+              colors={['rgba(168, 85, 247, 0.12)', 'rgba(168, 85, 247, 0.06)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                borderRadius: 16,
+                padding: 18,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderWidth: 1,
+                borderColor: 'rgba(168, 85, 247, 0.3)',
+              }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 12,
+                  backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginRight: 12,
+                }}>
+                  <MaterialIcons name="help" size={22} color="#a855f7" />
+                </View>
+                <Text style={{ fontSize: 15, fontWeight: '600', color: '#e2e8f0' }}>
+                  Help & Support
+                </Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={22} color="#64748b" />
+            </LinearGradient>
           </TouchableOpacity>
         </View>
 
@@ -177,21 +235,27 @@ export default function ProfileScreen() {
         <TouchableOpacity
           onPress={handleLogoutPress}
           style={{
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            borderWidth: 1.5,
-            borderColor: '#ef4444',
-            borderRadius: 12,
-            paddingVertical: 16,
-            paddingHorizontal: 16,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 12,
+            marginTop: 8,
           }}>
-          <MaterialIcons name="logout" size={20} color="#ef4444" />
-          <Text style={{ fontSize: 16, fontWeight: '700', color: '#ef4444', marginLeft: 8 }}>
-            Logout
-          </Text>
+          <LinearGradient
+            colors={['rgba(239, 68, 68, 0.15)', 'rgba(239, 68, 68, 0.08)']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              borderRadius: 16,
+              paddingVertical: 18,
+              paddingHorizontal: 18,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1.5,
+              borderColor: 'rgba(239, 68, 68, 0.4)',
+            }}>
+            <MaterialIcons name="logout" size={22} color="#ef4444" />
+            <Text style={{ fontSize: 16, fontWeight: '700', color: '#ef4444', marginLeft: 10 }}>
+              Logout
+            </Text>
+          </LinearGradient>
         </TouchableOpacity>
 
         <View style={{ height: 20 }} />

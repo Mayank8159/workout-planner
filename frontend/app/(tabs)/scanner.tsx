@@ -51,25 +51,62 @@ export default function ScannerScreen() {
   if (!permission.granted) {
     return (
       <SafeAreaView className="flex-1 bg-slate-900">
-        <LinearGradient colors={['#0f172a', '#1e293b']} className="flex-1 justify-center items-center px-6">
-          <View className="bg-slate-800 rounded-full p-6 mb-6">
-              <MaterialIcons name="camera-alt" size={36} color="#E5E7EB" />
+        <LinearGradient 
+          colors={['#0f172a', '#1e293b']} 
+          className="flex-1 justify-center items-center"
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}>
+          <View style={{
+            borderRadius: 20,
+            padding: 28,
+            alignItems: 'center',
+            backgroundColor: 'rgba(249, 115, 22, 0.08)',
+            borderWidth: 1,
+            borderColor: 'rgba(249, 115, 22, 0.25)',
+            marginHorizontal: 24,
+          }}>
+            <View style={{
+              width: 80,
+              height: 80,
+              borderRadius: 40,
+              backgroundColor: 'rgba(249, 115, 22, 0.15)',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 20,
+              borderWidth: 2,
+              borderColor: 'rgba(249, 115, 22, 0.3)',
+            }}>
+              <MaterialIcons name="camera-alt" size={44} color="#f97316" />
+            </View>
+            <Text className="text-white text-2xl font-bold mt-4 text-center mb-3">
+              Camera Permission Required
+            </Text>
+            <Text className="text-slate-300 text-center mt-2 mb-8 text-base leading-6">
+              We need camera access to scan food items and detect calories using AI
+            </Text>
+            <TouchableOpacity onPress={requestPermission}>
+              <LinearGradient
+                colors={['rgba(249, 115, 22, 0.25)', 'rgba(249, 115, 22, 0.15)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 14,
+                  paddingVertical: 16,
+                  paddingHorizontal: 32,
+                  borderWidth: 2,
+                  borderColor: '#f97316',
+                  shadowColor: '#f97316',
+                  shadowOpacity: 0.4,
+                  shadowRadius: 10,
+                  elevation: 8,
+                }}>
+                <Text className="text-orange-400 text-lg font-bold text-center">
+                  Grant Permission
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
           </View>
-          <Text className="text-white text-2xl font-bold mt-4 text-center mb-2">
-            Camera Permission Required
-          </Text>
-          <Text className="text-slate-400 text-center mt-2 mb-8 px-4">
-            We need camera access to scan food items for calorie detection
-          </Text>
-          <TouchableOpacity onPress={requestPermission}>
-          <View
-            className="rounded-2xl py-4 px-8 bg-gray-300 border-2 border-gray-400"
-            style={{ shadowColor: '#000000', shadowOpacity: 0.45, shadowRadius: 10, elevation: 8 }}
-          >
-            <Text className="text-gray-800 text-lg font-bold">Grant Permission</Text>
-          </View>
-        </TouchableOpacity>
-      </LinearGradient>
+        </LinearGradient>
       </SafeAreaView>
     );
   }
@@ -197,108 +234,167 @@ export default function ScannerScreen() {
             >
               {/* Scanner Frame */}
               <View className="flex-1 justify-center items-center pt-6">
-                <View className="w-80 h-80 border-4 border-gray-400 rounded-3xl overflow-hidden">
+                <View className="w-80 h-80 border-4 border-orange-400 rounded-3xl overflow-hidden" style={{ borderColor: '#f97316' }}>
                   {isScanning && <ScannerLaser />}
                 </View>
-                <Text className="text-white text-center mt-6 text-lg px-8">
+                <Text className="text-white text-center mt-8 text-lg px-8 font-semibold">
                   Position food within the frame
                 </Text>
               </View>
             </CameraView>
 
             {/* Header */}
-            <View className="absolute top-0 left-0 right-0 pt-4 pb-6 px-6 bg-slate-900/80">
-              <Text className="text-white text-3xl font-bold">AI Scanner</Text>
-              <Text className="text-slate-400 text-sm mt-1">Scan food to track calories</Text>
+            <View className="absolute top-0 left-0 right-0 pt-4 pb-6 px-6">
+              <LinearGradient
+                colors={['rgba(249, 115, 22, 0.15)', 'rgba(249, 115, 22, 0.05)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 16,
+                  padding: 16,
+                  borderWidth: 1,
+                  borderColor: 'rgba(249, 115, 22, 0.3)',
+                }}>
+                <Text className="text-white text-3xl font-bold">Food Scanner</Text>
+                <Text className="text-slate-300 text-sm mt-1">AI-powered calorie detection</Text>
+              </LinearGradient>
             </View>
 
-          {/* Bottom Controls */}
-          <View className="absolute bottom-0 left-0 right-0 pb-24 px-6 bg-slate-900/80 pt-6">
-            <TouchableOpacity
-              onPress={takePicture}
-              disabled={isLoading}
-              className="items-center"
-            >
-              <View
-                className="rounded-full w-20 h-20 items-center justify-center"
+            {/* Bottom Controls */}
+            <View className="absolute bottom-0 left-0 right-0 pb-24 px-6">
+              <LinearGradient
+                colors={['rgba(15, 23, 42, 0.4)', 'rgba(15, 23, 42, 0.85)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
                 style={{
-                  backgroundColor: '#E5E7EB',
-                  borderWidth: 2,
-                  borderColor: '#D1D5DB',
-                  shadowColor: '#000000',
-                  shadowOpacity: 0.6,
-                  shadowRadius: 10,
-                  elevation: 10,
-                }}
-              >
-                {isLoading ? (
-                  <ActivityIndicator color="#6B21A8" />
-                ) : (
-                  <MaterialIcons name="photo-camera" size={40} color="#6B21A8" />
+                  borderTopLeftRadius: 24,
+                  borderTopRightRadius: 24,
+                  paddingVertical: 20,
+                  alignItems: 'center',
+                  borderTopWidth: 1,
+                  borderTopColor: 'rgba(249, 115, 22, 0.2)',
+                }}>
+                <TouchableOpacity
+                  onPress={takePicture}
+                  disabled={isLoading}
+                  className="items-center"
+                >
+                  <View
+                    className="rounded-full w-24 h-24 items-center justify-center"
+                    style={{
+                      backgroundColor: '#f97316',
+                      borderWidth: 4,
+                      borderColor: '#fed7aa',
+                      shadowColor: '#f97316',
+                      shadowOpacity: 0.6,
+                      shadowRadius: 16,
+                      elevation: 12,
+                    }}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator color="#ffffff" size="large" />
+                    ) : (
+                      <MaterialIcons name="photo-camera" size={44} color="#ffffff" />
+                    )}
+                  </View>
+                </TouchableOpacity>
+                {isLoading && (
+                  <Text className="text-orange-300 text-center mt-6 font-bold text-lg">
+                    Analyzing image...
+                  </Text>
                 )}
-              </View>
-            </TouchableOpacity>
+              </LinearGradient>
+            </View>
+          </>
+        ) : (
+          <View className="flex-1 justify-center items-center bg-slate-900">
+            <Image source={{ uri: capturedImage }} className="w-full h-96" resizeMode="contain" />
             {isLoading && (
-              <Text className="text-gray-300 text-center mt-4 font-semibold">
-                Analyzing...
-              </Text>
+              <View className="mt-8">
+                <ActivityIndicator size="large" color="#f97316" />
+                <Text className="text-slate-300 mt-6 font-semibold text-center">Processing image...</Text>
+              </View>
+            )}
+            
+            {!isLoading && (
+              <View className="absolute bottom-0 left-0 right-0 pb-20 px-6">
+                <LinearGradient
+                  colors={['rgba(15, 23, 42, 0.4)', 'rgba(15, 23, 42, 0.95)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={{
+                    borderTopLeftRadius: 24,
+                    borderTopRightRadius: 24,
+                    paddingVertical: 20,
+                    paddingHorizontal: 16,
+                    borderTopWidth: 1,
+                    borderTopColor: 'rgba(249, 115, 22, 0.2)',
+                  }}>
+                  <View className="flex-row justify-between gap-4">
+                    <TouchableOpacity
+                      onPress={() => setCapturedImage(null)}
+                      className="flex-1"
+                    >
+                      <LinearGradient
+                        colors={['rgba(71, 85, 105, 0.4)', 'rgba(51, 65, 85, 0.6)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={{
+                          borderRadius: 16,
+                          paddingVertical: 16,
+                          alignItems: 'center',
+                          borderWidth: 1,
+                          borderColor: 'rgba(100, 116, 139, 0.3)',
+                        }}>
+                        <MaterialIcons name="close" size={24} color="#e2e8f0" />
+                        <Text className="text-slate-200 font-bold mt-2">Retake</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                    
+                    <TouchableOpacity
+                      onPress={takePicture}
+                      disabled={isLoading}
+                      className="flex-1"
+                    >
+                      <LinearGradient
+                        colors={['rgba(249, 115, 22, 0.2)', 'rgba(249, 115, 22, 0.1)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={{
+                          borderRadius: 16,
+                          paddingVertical: 16,
+                          alignItems: 'center',
+                          borderWidth: 2,
+                          borderColor: '#f97316',
+                          shadowColor: '#f97316',
+                          shadowOpacity: 0.4,
+                          shadowRadius: 8,
+                          elevation: 8,
+                        }}>
+                        <MaterialIcons name="check-circle" size={24} color="#f97316" />
+                        <Text className="text-orange-400 font-bold mt-2">Analyze</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  </View>
+                </LinearGradient>
+              </View>
             )}
           </View>
-        </>
-      ) : (
-        <View className="flex-1 justify-center items-center bg-slate-900">
-          <Image source={{ uri: capturedImage }} className="w-full h-96" resizeMode="contain" />
-          {isLoading && (
-            <View className="mt-6">
-              <ActivityIndicator size="large" color="#E5E7EB" />
-              <Text className="text-gray-300 mt-4">Processing image...</Text>
-            </View>
-          )}
-          
-          {!isLoading && (
-            <View className="absolute bottom-0 left-0 right-0 pb-20 px-6 bg-slate-900/80 pt-6 flex-row justify-between gap-3">
-              <TouchableOpacity
-                onPress={() => setCapturedImage(null)}
-                className="flex-1"
-              >
-                <View
-                  className="rounded-2xl py-4 items-center bg-slate-700 border-2 border-slate-600"
-                  style={{ shadowColor: '#000000', shadowOpacity: 0.3, shadowRadius: 8, elevation: 6 }}
-                >
-                  <Text className="text-white font-bold">Retake</Text>
-                </View>
-              </TouchableOpacity>
-              
-              <TouchableOpacity
-                onPress={takePicture}
-                disabled={isLoading}
-                className="flex-1"
-              >
-                <View
-                  className="rounded-2xl py-4 items-center bg-gray-300 border-2 border-gray-400"
-                  style={{ shadowColor: '#000000', shadowOpacity: 0.45, shadowRadius: 10, elevation: 8 }}
-                >
-                  <Text className="text-gray-800 font-bold">Analyze</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      )}
+        )}
 
-      {/* Result Modal */}
-      {predictionResult && (
-        <ScanResultModal
-          visible={showResultModal}
-          onClose={handleClose}
-          onAddToLog={handleAddToLog}
-          foodName={predictionResult.food_item}
-          calories={predictionResult.calories}
-          macros={predictionResult.macros}
-          confidence={predictionResult.confidence}
-          loading={isLoading}
-        />
-      )}
+        {/* Result Modal */}
+        {predictionResult && (
+          <ScanResultModal
+            visible={showResultModal}
+            onClose={handleClose}
+            onAddToLog={handleAddToLog}
+            foodName={predictionResult.food_item}
+            calories={predictionResult.calories}
+            macros={predictionResult.macros}
+            confidence={predictionResult.confidence}
+            loading={isLoading}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
