@@ -47,145 +47,198 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         if (storedToken) {
           console.log('✓ Token found, validating...');
           try {
-            // Create an abort controller with 15 second timeout (increased for mobile networks)
+            // Create a shorter timeout for initial validation (10 seconds max)
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const timeoutId = setTimeout(() => {
+              console.log('⏱️ Token validation timeout - clearing token');
+              controller.abort();
+            }, 10000);
             
-            const response = await axios.get(`${API_BASE_URL}/users/me`, {
-              headers: {
-                Authorization: `Bearer ${storedToken}`,
-              },
-              signal: controller.signal,
-              timeout: 15000,
-            });
-            
-            clearTimeout(timeoutId);
-            
-            const userData = response.data;
-            console.log('✓ User authenticated:', userData.username);
-            setUser({
-              id: userData.id || userData._id,
-              username: userData.username,
-              email: userData.email,
-              dailyCalorieGoal: userData.dailyCalorieGoal,
-              proteinGoal: userData.proteinGoal,
-              carbsGoal: userData.carbsGoal,
-              fiberGoal: userData.fiberGoal,
-              workoutStreak: userData.workoutStreak,
-              createdAt: userData.createdAt,
-            });
-            setToken(storedToken);
-            setIsAuthenticated(true);
+            try {
+              const response = await axios.get(`${API_BASE_URL}/users/me`, {
+                headers: {
+                  Authorization: `Bearer ${storedToken}`,
+                },
+                signal: controller.signal,
+                timeout: 10000,
+              });
+              
+              clearTimeout(timeoutId);
+              
+              const userData = response.data;
+              console.log('✓ User authenticated:', userData.username);
+              setUser({
+                id: userData.id || userData._id,
+                username: userData.username,
+                email: userData.email,
+                dailyCalorieGoal: userData.dailyCalorieGoal,
+                proteinGoal: userData.proteinGoal,
+                carbsGoal: userData.carbsGoal,
+                fiberGoal: userData.fiberGoal,
+                workoutStreak: userData.workoutStreak,
+                createdAt: userData.createdAt,
+              });
+              setToken(storedToken);
+              setIsAuthenticated(true);
+            } catch (axiosError: any) {
+              clearTimeout(timeoutId);
+              throw axiosError;
+            }
           } catch (validateError: any) {
-            console.log('❌ Token validation failed:', validateError?.response?.status || validateError?.code || validateError.message);
-            // If it's a 401, timeout, or network error, clear the token
+            const errorMsg = validateError?.response?.status || validateError?.code || validateError.message || 'Unknown';
+            console.log('❌ Token validation failed:', errorMsg);
+            
+            // If it's a 401, timeout, network error, or 500 error - clear the token
             if (
               validateError?.response?.status === 401 || 
+              validateError?.response?.status === 500 ||
               validateError.name === 'AbortError' ||
               validateError?.code === 'ECONNABORTED' ||
-              validateError?.code === 'ERR_NETWORK'
+              validateError?.code === 'ERR_NETWORK' ||
+              validateError?.message?.includes('timeout')
             ) {
-              console.log('🗑️ Clearing invalid/expired token');
+              console.log('🗑️ Clearing invalid/expired/unreachable token');
               try {
                 await secureStorage.removeToken();
               } catch (removeError) {
                 console.warn('⚠️ Could not remove token:', removeError);
               }
             }
+            // Don't re-throw - just continue with unauthenticated state
           }
         } else {
           console.log('ℹ No stored token found');
         }
       } catch (error: any) {
-        console.log('❌ Auth initialization error:', error?.message || 'Unknown error');
+        const errorMsg = error?.message || 'Unknown error';
+        console.log('❌ Auth initialization error:', errorMsg);
         // Ensure the app doesn't crash - just log and continue
       } finally {
-        // Always set loading to false, even if there's an error
+        // Always set loading to false, even if there was an error
         setIsLoading(false);
         console.log('✓ Auth initialization complete');
       }
     };
 
-    // Wrap in try-catch to prevent any uncaught errors
-    initializeAuth().catch((error) => {
-      console.error('❌ Critical auth initialization error:', error);
-      setIsLoading(false);
-    });
+    // Initialize auth and prevent unhandled rejections
+    let mounted = true;
+    initializeAuth()
+      .catch((error) => {
+        if (mounted) {
+          console.error('❌ Critical auth initialization error:', error);
+          setIsLoading(false);
+        }
+      });
+    
+    // Cleanup on unmount
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
       console.log('🔐 Logging in...');
-      // Call login endpoint to get token and user data
-      const loginResponse = await axios.post(`${API_BASE_URL}/auth/login`, {
-        email,
-        password,
-      });
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
+      try {
+        // Call login endpoint to get token and user data
+        const loginResponse = await axios.post(`${API_BASE_URL}/auth/login`, {
+          email,
+          password,
+        }, {
+          signal: controller.signal,
+          timeout: 15000,
+        });
+        
+        clearTimeout(timeoutId);
 
-      const accessToken = loginResponse.data.access_token;
-      const userData = loginResponse.data.user;
+        const accessToken = loginResponse.data.access_token;
+        const userData = loginResponse.data.user;
 
-      console.log('✓ Login successful, storing token...');
-      // Store token securely (platform-aware)
-      await secureStorage.setToken(accessToken);
+        console.log('✓ Login successful, storing token...');
+        // Store token securely (platform-aware)
+        await secureStorage.setToken(accessToken);
 
-      // Set user data from login response (no need for separate /users/me call)
-      setUser({
-        id: userData.id || userData._id,
-        username: userData.username,
-        email: userData.email,
-        dailyCalorieGoal: userData.dailyCalorieGoal,
-        proteinGoal: userData.proteinGoal,
-        carbsGoal: userData.carbsGoal,
-        fiberGoal: userData.fiberGoal,
-        workoutStreak: userData.workoutStreak,
-        createdAt: userData.createdAt,
-      });
-      setToken(accessToken);
-      setIsAuthenticated(true);
-      console.log('✓ User logged in successfully');
-    } catch (error) {
-      console.error('❌ Login failed:', error);
-      throw error;
+        // Set user data from login response (no need for separate /users/me call)
+        setUser({
+          id: userData.id || userData._id,
+          username: userData.username,
+          email: userData.email,
+          dailyCalorieGoal: userData.dailyCalorieGoal,
+          proteinGoal: userData.proteinGoal,
+          carbsGoal: userData.carbsGoal,
+          fiberGoal: userData.fiberGoal,
+          workoutStreak: userData.workoutStreak,
+          createdAt: userData.createdAt,
+        });
+        setToken(accessToken);
+        setIsAuthenticated(true);
+        console.log('✓ User logged in successfully');
+      } catch (axiosError: any) {
+        clearTimeout(timeoutId);
+        throw axiosError;
+      }
+    } catch (error: any) {
+      const errorMsg = error?.response?.data?.detail || error?.message || 'Login failed';
+      console.error('❌ Login failed:', errorMsg);
+      throw new Error(errorMsg);
     }
   };
 
   const register = async (username: string, email: string, password: string, dailyCalorieGoal: number = 2000) => {
     try {
       console.log('📝 Registering new user...');
-      // Call register endpoint - it returns token and user data
-      const registerResponse = await axios.post(`${API_BASE_URL}/auth/register`, {
-        username,
-        email,
-        password,
-        dailyCalorieGoal,
-      });
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
+      try {
+        // Call register endpoint - it returns token and user data
+        const registerResponse = await axios.post(`${API_BASE_URL}/auth/register`, {
+          username,
+          email,
+          password,
+          dailyCalorieGoal,
+        }, {
+          signal: controller.signal,
+          timeout: 15000,
+        });
+        
+        clearTimeout(timeoutId);
 
-      const accessToken = registerResponse.data.access_token;
-      const userData = registerResponse.data.user;
+        const accessToken = registerResponse.data.access_token;
+        const userData = registerResponse.data.user;
 
-      console.log('✓ Registration successful, storing token...');
-      // Store token securely (platform-aware)
-      await secureStorage.setToken(accessToken);
+        console.log('✓ Registration successful, storing token...');
+        // Store token securely (platform-aware)
+        await secureStorage.setToken(accessToken);
 
-      // Set user data from register response
-      setUser({
-        id: userData.id || userData._id,
-        username: userData.username,
-        email: userData.email,
-        dailyCalorieGoal: userData.dailyCalorieGoal,
-        proteinGoal: userData.proteinGoal,
-        carbsGoal: userData.carbsGoal,
-        fiberGoal: userData.fiberGoal,
-        workoutStreak: userData.workoutStreak,
-        createdAt: userData.createdAt,
-      });
-      setToken(accessToken);
-      setIsAuthenticated(true);
-      console.log('✓ User registered and logged in successfully');
-    } catch (error) {
-      console.error('❌ Registration failed:', error);
-      throw error;
+        // Set user data from register response
+        setUser({
+          id: userData.id || userData._id,
+          username: userData.username,
+          email: userData.email,
+          dailyCalorieGoal: userData.dailyCalorieGoal,
+          proteinGoal: userData.proteinGoal,
+          carbsGoal: userData.carbsGoal,
+          fiberGoal: userData.fiberGoal,
+          workoutStreak: userData.workoutStreak,
+          createdAt: userData.createdAt,
+        });
+        setToken(accessToken);
+        setIsAuthenticated(true);
+        console.log('✓ User registered and logged in successfully');
+      } catch (axiosError: any) {
+        clearTimeout(timeoutId);
+        throw axiosError;
+      }
+    } catch (error: any) {
+      const errorMsg = error?.response?.data?.detail || error?.message || 'Registration failed';
+      console.error('❌ Registration failed:', errorMsg);
+      throw new Error(errorMsg);
     }
   };
 
