@@ -26,29 +26,33 @@ function RootLayoutContent() {
       return;
     }
 
-    console.log('🔐 Auth check - isAuthenticated:', isAuthenticated, 'route:', segments[0]);
+    try {
+      console.log('🔐 Auth check - isAuthenticated:', isAuthenticated, 'route:', segments[0]);
 
-    // Determine if user is trying to access protected vs public routes
-    const inAuthGroup = segments[0] === '(tabs)';
-    const inAuthScreen = segments[0] === 'login' || segments[0] === 'signup';
-    const isOnPublicRoute = !inAuthGroup;
+      // Determine if user is trying to access protected vs public routes
+      const inAuthGroup = segments[0] === '(tabs)';
+      const inAuthScreen = segments[0] === 'login' || segments[0] === 'signup';
+      const isOnPublicRoute = !inAuthGroup;
 
-    if (!isAuthenticated && inAuthGroup) {
-      // User is NOT authenticated but trying to access protected routes
-      console.log('❌ Not authenticated, redirecting to login...');
-      router.replace('/login');
-    } else if (!isAuthenticated && !inAuthScreen && isOnPublicRoute) {
-      // Not authenticated and not on auth screens - go to login
-      console.log('⚠️ Unprotected route accessed without auth, redirecting to login...');
-      router.replace('/login');
-    } else if (isAuthenticated && inAuthScreen) {
-      // IS authenticated but on login/signup screen
-      console.log('✓ Authenticated on login screen, redirecting to dashboard...');
-      router.replace('/(tabs)/dashboard');
-    } else {
-      console.log('✓ Auth state valid for current route');
+      if (!isAuthenticated && inAuthGroup) {
+        // User is NOT authenticated but trying to access protected routes
+        console.log('❌ Not authenticated, redirecting to login...');
+        router.replace('/login');
+      } else if (!isAuthenticated && !inAuthScreen && isOnPublicRoute) {
+        // Not authenticated and not on auth screens - go to login
+        console.log('⚠️ Unprotected route accessed without auth, redirecting to login...');
+        router.replace('/login');
+      } else if (isAuthenticated && inAuthScreen) {
+        // IS authenticated but on login/signup screen
+        console.log('✓ Authenticated on login screen, redirecting to dashboard...');
+        router.replace('/(tabs)/dashboard');
+      } else {
+        console.log('✓ Auth state valid for current route');
+      }
+    } catch (error) {
+      console.error('❌ Error in route navigation:', error);
     }
-  }, [isAuthenticated, isLoading, segments]);
+  }, [isAuthenticated, isLoading, segments, router]);
 
   // Show splash screen while initializing
   if (isLoading) {
