@@ -9,52 +9,71 @@ logger = logging.getLogger(__name__)
 
 class FoodModelLoader:
     """
-    Loads and manages Keras/TensorFlow H5 food detection models
-    Supports multiple model architectures and custom trained models
+    Loads and manages TensorFlow Lite food detection models
+    Uses lightweight TFLite runtime instead of full TensorFlow
+    Perfect for deployment on resource-constrained servers
     """
     
     def __init__(self):
-        self.model: Optional[object] = None
+        self.interpreter: Optional[object] = None
+        self.input_details: Optional[list] = None
+        self.output_details: Optional[list] = None
         self.class_names: Optional[list] = None
-        self.model_type: Optional[str] = None
+        self.model_type: str = "tflite"
         self.input_shape: Tuple[int, int, int] = (224, 224, 3)
         
     def load_model(self, model_path: str) -> bool:
         """
-        Load a Keras H5 model
+        Load a TensorFlow Lite model
         
         Args:
-            model_path: Path to .h5 model file
+            model_path: Path to .tflite model file
             
         Returns:
             True if successful, False otherwise
         """
         try:
-            import tensorflow as tf
+            # Try tflite_runtime first (lightweight, ~1MB)
+            try:
+                import tflite_runtime.interpreter as tflite
+                logger.info("Using tflite_runtime (lightweight)")
+            except ImportError:
+                # Fallback to tensorflow.lite (if full TF is installed)
+                import tensorflow as tf
+                tflite = tf.lite
+                logger.info("Using tensorflow.lite")
             
             if not os.path.exists(model_path):
                 logger.warning(f"Model not found at {model_path}")
                 return False
                 
-            logger.info(f"Loading model from {model_path}...")
-            self.model = tf.keras.models.load_model(model_path)
+            logger.info(f"Loading TFLite model from {model_path}...")
             
-            # Get input shape from model
-            input_layer_shape = self.model.input_shape
-            self.input_shape = (input_layer_shape[1], input_layer_shape[2], 3)
+            # Load TFLite model
+            self.interpreter = tflite.Interpreter(model_path=model_path)
+            self.interpreter.allocate_tensors()
             
-            logger.info(f"Model loaded successfully!")
-            logger.info(f"Input shape: {self.input_shape}")
-            logger.info(f"Output shape: {self.model.output_shape}")
+            # Get input and output details
+            self.input_details = self.interpreter.get_input_details()
+            self.output_details = self.interpreter.get_output_details()
+            
+            # Get input shape
+            input_shape = self.input_details[0]['shape']
+            self.input_shape = (int(input_shape[1]), int(input_shape[2]), 3)
+            
+            logger.info(f"✅ TFLite model loaded successfully!")
+            logger.info(f"   Input shape: {self.input_shape}")
+            logger.info(f"   Input dtype: {self.input_details[0]['dtype']}")
+            logger.info(f"   Output shape: {self.output_details[0]['shape']}")
             
             return True
             
         except ImportError:
-            logger.warning("TensorFlow not available. Model loading disabled.")
+            logger.warning("TFLite runtime not available. Model loading disabled.")
             return False
         except Exception as e:
-            logger.error(f"Failed to load model: {e}")
-            self.model = None
+            logger.error(f"Failed to load TFLite model: {e}")
+            self.interpreter = None
             return False
     
     def load_class_names(self, class_names_path: str) -> bool:
@@ -84,7 +103,7 @@ class FoodModelLoader:
     
     def predict(self, image_array: np.ndarray, top_k: int = 5) -> Dict:
         """
-        Make predictions on an image
+        Make predictions on an image using TFLite interpreter
         
         Args:
             image_array: Preprocessed image array (224, 224, 3)
@@ -93,7 +112,7 @@ class FoodModelLoader:
         Returns:
             Dictionary with predictions
         """
-        if self.model is None:
+        if self.interpreter is None:
             return {"error": "Model not loaded"}
             
         try:
@@ -101,16 +120,33 @@ class FoodModelLoader:
             if len(image_array.shape) == 3:
                 image_array = np.expand_dims(image_array, axis=0)
             
-            # Make prediction
-            predictions = self.model.predict(image_array, verbose=0)
+            # Convert to correct dtype (TFLite usually expects float32)
+            image_array = image_array.astype(self.input_details[0]['dtype'])
+            
+            # Set input tensor
+            self.interpreter.set_tensor(self.input_details[0]['index'], image_array)
+            
+            # Run inference
+            self.interpreter.invoke()
+            
+            # Get output tensor
+            predictions = self.interpreter.get_tensor(self.output_details[0]['index'])[0]
+            
+            # Ensure top_k doesn't exceed available classes
+            num_classes = len(predictions)
+            top_k = min(top_k, num_classes)
             
             # Get top K predictions
-            top_indices = np.argsort(predictions[0])[-top_k:][::-1]
+            top_indices = np.argsort(predictions)[-top_k:][::-1]
             
             results = []
             for idx in top_indices:
-                class_name = self.class_names[idx] if self.class_names else f"Class_{idx}"
-                confidence = float(predictions[0][idx])
+                # Make sure idx is within bounds
+                if idx >= len(predictions):
+                    continue
+                    
+                class_name = self.class_names[idx] if (self.class_names and idx < len(self.class_names)) else f"Class_{idx}"
+                confidence = float(predictions[idx])
                 
                 results.append({
                     "class_index": int(idx),
@@ -124,11 +160,10 @@ class FoodModelLoader:
                 "timestamp": datetime.utcnow().isoformat()
             }
             
-        except ImportError:
-            logger.error("TensorFlow not available for predictions")
-            return {"error": "TensorFlow not available"}
         except Exception as e:
-            logger.error(f"Prediction failed: {e}")
+            logger.error(f"TFLite prediction failed: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
             return {"error": str(e)}
     
     def preprocess_image(self, image_array: np.ndarray) -> np.ndarray:
@@ -172,8 +207,8 @@ class FoodModelLoader:
             return image_array.astype(np.float32) / 255.0 if image_array.max() > 1 else image_array.astype(np.float32)
     
     def is_loaded(self) -> bool:
-        """Check if model is currently loaded"""
-        return self.model is not None
+        """Check if TFLite model is currently loaded"""
+        return self.interpreter is not None
 
 
 # Global model instance
