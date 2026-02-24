@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 14.1.1"
+    "version": ">= 14.1.1",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -16,10 +17,17 @@
     "production": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EAS_BUILD_NO_EXPO_GO_WARNING": "true"
       }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./play-store-credentials.json"
+      }
+    }
   }
 }
