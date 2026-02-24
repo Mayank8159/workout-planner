@@ -1,0 +1,158 @@
+===============================================================================
+                    🎯 CRASH FIX - ROLLOUT PLAN
+===============================================================================
+                    February 24, 2026
+===============================================================================
+
+THE PROBLEM:
+============
+The APK was crashing immediately on launch because:
+1. Backend wasn't responding yet during app initialization
+2. The token validation call (/users/me) was timing out
+3. This timeout wasn't being caught properly in UserContext
+4. Caused unhandled promise rejection → APP CRASH
+
+
+THE SOLUTION IMPLEMENTED:
+==========================
+I've improved the UserContext error handling:
+
+✅ Reduced timeout for token validation: 15s → 10s
+✅ Added better error catching for network timeouts
+✅ Clear invalid tokens on network/timeout errors (not just 401)
+✅ Added 500-error handling (backend errors)
+✅ Better error messages in login/signup
+✅ Prevent unhandled promise rejections with proper cleanup
+
+
+WHAT TO DO NOW:
+================
+
+1️⃣ WAIT FOR RENDER DEPLOYMENT (5-10 minutes)
+   Backend has been pushed with these changes:
+   • TFLite model support
+   • Better error responses
+   • IST timezone
+   
+   Check status: https://dashboard.render.com
+
+2️⃣ DOWNLOAD NEW APK
+   Build Link: https://expo.dev/accounts/mayank8159/projects/workout-planner/builds
+   
+   Look for the latest build with:
+   - Version: 1.0.1
+   - Commit: 1005150 (latest)
+
+3️⃣ INSTALL & TEST
+   • Download APK
+   • Install on phone
+   • Open app - should show LOGIN screen (no crash!)
+   • Test signup/login
+   • Test scanning food image
+
+
+EXPECTED BEHAVIOR (NEW):
+========================
+✅ App opens to login screen (no crash)
+✅ If no internet: Still shows login screen gracefully
+✅ Login/signup shows clear error messages
+✅ Food scanner actually reads images (TFLite)
+✅ Error in weird situations shows error boundary
+
+
+WHAT'S DIFFERENT FROM BEFORE:
+================================
+BEFORE:
+❌ App crashed immediately if backend unreachable
+❌ Timeout errors weren't caught
+❌ Long timeouts (15s) causing freeze perception
+❌ No error messages to user
+
+AFTER:
+✅ App shows login screen even if backend is down
+✅ Clear error messages when login fails
+✅ Faster timeout detection (10s)
+✅ Network errors handled gracefully
+✅ Error boundary catches remaining errors
+
+
+TROUBLESHOOTING IF STILL CRASH:
+==================================
+
+1. Check logs in Android Studio or adb:
+   adb logcat | grep -i "error\|crash\|exception"
+
+2. Clear app data:
+   - Settings → Apps → Workout Planner → Clear Data
+   - Reinstall APK
+
+3. Upgrade to latest EAS CLI:
+   npm install -g eas-cli@latest
+
+4. Try with internet OFF:
+   - Phone in airplane mode
+   - App should still load login screen
+   - (Backend call will fail gracefully)
+
+
+BUILD CHAIN:
+============
+1. Code changes committed ✅  
+2. Pushed to GitHub ✅
+3. Render deployment initiated ⏳ (in progress, 5-10 min)
+4. New APK build queued ⏳ (will be ready when Render finishes)
+5. Download and test 🔜 (use latest build)
+
+
+KEY FILES CHANGED:
+===================
+- frontend/context/UserContext.tsx
+  • Better error handling in initialization
+  • Timeout catching for /users/me endpoint
+  • Network error detection
+  • Proper cleanup on component unmount
+
+
+WHAT YOU'LL SEE:
+====================
+1. Open app → Load splash screen for 2-3 seconds
+2. → Shows login screen (or signup if you don't have account)
+3. Enter credentials → 
+   - Success: Goes to dashboard
+   - Error: Shows error message (not crash!)
+4. Food scanner → Actually analyzes photos with TFLite model
+
+
+💡 NEXT STEPS:
+================
+1. Wait 10 minutes for Render to redeploy
+2. Download latest APK from build link above
+3. Install on phone
+4. Test login/signup
+5. Report if works or still crashes
+6. If crashes, share the Android error log
+
+
+BUILD INFO:
+============
+Latest Commit: 1005150
+Changes: Better UserContext error handling
+Build Status: Queued (waiting for push to be recognized)
+Download: https://expo.dev/accounts/mayank8159/projects/workout-planner
+
+
+ESTIMATED TIMELINE:
+====================
+Now        → Changes pushed ✅
++5-10 min  → Render redeploy complete
++15-20 min → New APK build complete
++20-25 min → Ready to download and test
+
+
+If still crashing after installing new APK:
+Please share:
+1. Android console error (adb logcat)
+2. What exactly you see (screen goes black? freezes? etc.)
+3. Time duration before crash
+
+=========================================================v
