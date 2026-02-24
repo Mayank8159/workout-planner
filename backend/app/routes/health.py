@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from app.utils.timezone import get_ist_now
 
 router = APIRouter(tags=["health"])
 
@@ -9,11 +10,11 @@ async def health_check():
     Health check endpoint for monitoring
     
     Returns:
-        Status and timestamp
+        Status and timestamp in IST
     """
-    from datetime import datetime
     return {
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": get_ist_now().isoformat(),
+        "timezone": "IST (UTC+5:30)",
         "version": "1.0.0"
     }

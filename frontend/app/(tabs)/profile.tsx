@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/context/UserContext';
 import LogoutConfirmModal from '@/components/LogoutConfirmModal';
+import { formatISTLocalDate } from '@/utils/istTimezone';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -143,7 +144,7 @@ export default function ProfileScreen() {
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ fontSize: 14, color: '#94a3b8', fontWeight: '500' }}>Member Since</Text>
               <Text style={{ fontSize: 14, fontWeight: '700', color: '#cbd5e1' }}>
-                {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                {user?.createdAt ? formatISTLocalDate(user.createdAt) : 'N/A'}
               </Text>
             </View>
           </LinearGradient>

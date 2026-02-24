@@ -7,6 +7,7 @@ import * as Progress from 'react-native-progress';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'expo-router';
 import { dataAPI } from '@/utils/api';
+import { getISTNow, getISTDateString, formatISTDate, getISTTimeAgo } from '@/utils/istTimezone';
 
 const { width } = Dimensions.get('window');
 
@@ -72,16 +73,16 @@ export default function DashboardScreen() {
   useEffect(() => {
     const generateWeek = () => {
       const days: DayData[] = [];
-      const today = new Date();
+      const today = getISTNow();
 
       for (let i = 0; i < 7; i++) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
         days.push({
           date,
-          dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),
+          dayName: formatISTDate(date, { weekday: 'short', timeZone: 'Asia/Kolkata' }),
           dayNumber: date.getDate(),
-          isToday: date.toDateString() === today.toDateString(),
+          isToday: getISTDateString(date) === getISTDateString(today),
         });
       }
       setWeekDays(days);
@@ -102,7 +103,7 @@ export default function DashboardScreen() {
         setIsLoading(true);
         setError(null);
 
-        const dateStr = selectedDate.toISOString().split('T')[0];
+        const dateStr = getISTDateString(selectedDate);
         const dailyData = await dataAPI.getDailyData(dateStr);
 
         // Update nutrition data
@@ -140,31 +141,18 @@ export default function DashboardScreen() {
 
   const formatTime = (dateString: string) => {
     try {
-      const date = new Date(dateString);
-      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      return formatISTDate(new Date(dateString), {
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'Asia/Kolkata',
+      });
     } catch {
       return 'N/A';
     }
   };
 
   const getTimeAgo = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diffMs = now.getTime() - date.getTime();
-      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-      const diffMins = Math.floor(diffMs / (1000 * 60));
-
-      if (diffHours > 0) {
-        return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-      } else if (diffMins > 0) {
-        return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
-      } else {
-        return 'Just now';
-      }
-    } catch {
-      return 'Recently';
-    }
+    return getISTTimeAgo(dateString);
   };
 
   return (

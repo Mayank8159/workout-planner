@@ -8,6 +8,7 @@ from app.models.schemas import (
 )
 from app.core.security import hash_password, create_access_token, verify_password
 from app.models.database import get_database
+from app.utils.timezone import get_ist_now
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -41,7 +42,7 @@ async def register(user_data: UserRegisterSchema):
         "password": hashed_password,
         "dailyCalorieGoal": user_data.dailyCalorieGoal,
         "workoutStreak": 0,
-        "createdAt": datetime.utcnow(),
+        "createdAt": get_ist_now(),
     }
     
     result = await db["users"].insert_one(new_user)
@@ -58,7 +59,7 @@ async def register(user_data: UserRegisterSchema):
             username=user_data.username,
             dailyCalorieGoal=user_data.dailyCalorieGoal,
             workoutStreak=0,
-            createdAt=datetime.utcnow(),
+            createdAt=get_ist_now(),
         )
     )
 
@@ -103,6 +104,6 @@ async def login(credentials: UserLoginSchema):
             username=user["username"],
             dailyCalorieGoal=user.get("dailyCalorieGoal", 2000),
             workoutStreak=user.get("workoutStreak", 0),
-            createdAt=user.get("createdAt", datetime.utcnow()),
+            createdAt=user.get("createdAt", get_ist_now()),
         )
     )

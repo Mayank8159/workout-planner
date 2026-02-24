@@ -4,6 +4,7 @@ from uuid import uuid4
 from app.models.database import get_database
 from app.models.schemas import WorkoutLogSchema
 from app.utils.auth import get_current_user
+from app.utils.timezone import get_ist_now, get_ist_date_string
 
 router = APIRouter(prefix="/workout", tags=["workout logging"])
 
@@ -25,7 +26,7 @@ async def log_workout(
     """
     try:
         db = get_database()
-        today = datetime.utcnow().strftime("%Y-%m-%d")
+        today = get_ist_date_string()
         
         # Create workout entry
         workout_entry = {
@@ -35,7 +36,7 @@ async def log_workout(
             "reps": workout.reps,
             "weight": workout.weight,
             "duration": workout.duration,
-            "date": datetime.utcnow().isoformat(),
+            "date": get_ist_now().isoformat(),
         }
         
         # Update or create daily log
@@ -57,7 +58,7 @@ async def log_workout(
                 "date": today,
                 "workouts": [workout_entry],
                 "nutrition": {"totalCalories": 0, "items": []},
-                "createdAt": datetime.utcnow(),
+                "createdAt": get_ist_now(),
             })
         
         return {

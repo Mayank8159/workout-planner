@@ -13,6 +13,7 @@ from app.models.schemas import FoodPredictionSchema
 from app.utils.auth import get_current_user
 from app.utils.food_macros import get_food_nutrition, get_food_count, get_all_food_classes
 from app.utils.model_loader import food_model
+from app.utils.timezone import get_ist_now, get_ist_date_string
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/scan", tags=["food scanning"])
@@ -273,7 +274,7 @@ async def scan_food(
         
         # Save to daily logs
         db = get_database()
-        today = datetime.utcnow().strftime("%Y-%m-%d")
+        today = get_ist_date_string()
         
         # Update or create daily log
         daily_log = await db["daily_logs"].find_one({
@@ -290,7 +291,7 @@ async def scan_food(
             "fat": round(fat, 1),
             "fiber": round(fiber, 1),
             "confidence": round(confidence, 4),
-            "date": datetime.utcnow().isoformat(),
+            "date": get_ist_now().isoformat(),
         }
         
         if daily_log:
@@ -322,7 +323,7 @@ async def scan_food(
                     "total_fiber": fiber,
                     "items": [food_entry]
                 },
-                "createdAt": datetime.utcnow(),
+                "createdAt": get_ist_now(),
             })
         
         logger.info(f"Food scanned: {food_item} - Calories: {calories}, Protein: {protein}g, Carbs: {carbs}g, Fat: {fat}g, Fiber: {fiber}g - Confidence: {confidence}")

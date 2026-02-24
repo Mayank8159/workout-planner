@@ -8,7 +8,10 @@ const apiClient: AxiosInstance = axios.create({
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
+  // Retry configuration for network issues
+  validateStatus: (status) => status < 500, // Don't throw on 4xx errors
 });
 
 // Add token to requests
@@ -24,7 +27,28 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error('Request interceptor error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for better error handling
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle network errors gracefully
+    if (error.code === 'ECONNABORTED') {
+      console.error('Request timeout - server taking too long to respond');
+    } else if (error.code === 'ERR_NETWORK') {
+      console.error('Network error - check your internet connection');
+    } else if (error.response) {
+      console.error('API error:', error.response.status, error.response.data);
+    } else {
+      console.error('Unknown API error:', error.message);
+    }
+    return Promise.reject(error);
+  }
 );
 
 export const userAPI = {

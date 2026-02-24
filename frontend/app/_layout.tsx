@@ -8,6 +8,7 @@ import '../globals.css';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { UserProvider, useUser } from '@/context/UserContext';
 import SplashScreen from '@/components/SplashScreen';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -70,8 +71,10 @@ function RootLayoutContent() {
 
 export default function RootLayout() {
   return (
-    <UserProvider>
-      <RootLayoutContent />
-    </UserProvider>
+    <ErrorBoundary>
+      <UserProvider>
+        <RootLayoutContent />
+      </UserProvider>
+    </ErrorBoundary>
   );
 }

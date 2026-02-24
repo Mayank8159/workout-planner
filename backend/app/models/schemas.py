@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 from datetime import datetime
 from bson import ObjectId
+from app.utils.timezone import get_ist_now
 
 
 class PyObjectId(ObjectId):
@@ -85,10 +86,10 @@ class DailyLogSchema(BaseModel):
     """Daily log document schema"""
     id: Optional[str] = Field(None, alias="_id")
     user_id: str
-    date: str  # YYYY-MM-DD format
+    date: str  # YYYY-MM-DD format in IST
     workouts: List[dict] = Field(default_factory=list)
     nutrition: dict = Field(default_factory=lambda: {"totalCalories": 0, "items": []})
-    createdAt: datetime = Field(default_factory=datetime.utcnow)
+    createdAt: datetime = Field(default_factory=get_ist_now)
     
     class Config:
         populate_by_name = True

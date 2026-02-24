@@ -47,15 +47,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         if (storedToken) {
           console.log('✓ Token found, validating...');
           try {
-            // Create an abort controller with 5 second timeout
+            // Create an abort controller with 15 second timeout (increased for mobile networks)
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
             
             const response = await axios.get(`${API_BASE_URL}/users/me`, {
               headers: {
                 Authorization: `Bearer ${storedToken}`,
               },
               signal: controller.signal,
+              timeout: 15000,
             });
             
             clearTimeout(timeoutId);
@@ -76,24 +77,40 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
             setToken(storedToken);
             setIsAuthenticated(true);
           } catch (validateError: any) {
-            console.log('❌ Token validation failed:', validateError?.response?.status || validateError.message);
-            // If it's a 401 or timeout, clear the token
-            if (validateError?.response?.status === 401 || validateError.name === 'AbortError') {
+            console.log('❌ Token validation failed:', validateError?.response?.status || validateError?.code || validateError.message);
+            // If it's a 401, timeout, or network error, clear the token
+            if (
+              validateError?.response?.status === 401 || 
+              validateError.name === 'AbortError' ||
+              validateError?.code === 'ECONNABORTED' ||
+              validateError?.code === 'ERR_NETWORK'
+            ) {
               console.log('🗑️ Clearing invalid/expired token');
-              await secureStorage.removeToken();
+              try {
+                await secureStorage.removeToken();
+              } catch (removeError) {
+                console.warn('⚠️ Could not remove token:', removeError);
+              }
             }
           }
         } else {
           console.log('ℹ No stored token found');
         }
       } catch (error: any) {
-        console.log('❌ Auth initialization error:', error?.message);
+        console.log('❌ Auth initialization error:', error?.message || 'Unknown error');
+        // Ensure the app doesn't crash - just log and continue
       } finally {
+        // Always set loading to false, even if there's an error
         setIsLoading(false);
+        console.log('✓ Auth initialization complete');
       }
     };
 
-    initializeAuth();
+    // Wrap in try-catch to prevent any uncaught errors
+    initializeAuth().catch((error) => {
+      console.error('❌ Critical auth initialization error:', error);
+      setIsLoading(false);
+    });
   }, []);
 
   const login = async (email: string, password: string) => {
